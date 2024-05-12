@@ -93,18 +93,17 @@ gantt
         Prozessbeschreibung: P02, 13.05.2024, 14d
         Daten- und IT-Architektur : P03, 13.05.2024, 14d
         Glossar erstellen : P05, 13.05.2024, 14d
-        Literangabe-Formate analysisieren : P06, 20.05.2024, 14d
+        Literangabeformate analysisieren : P06, 20.05.2024, 14d
         Datenquellen bestimmen : P07, 13.05.2024, 14d
         Web Scraping : P08, 13.05.2024, 14d
         Webserver + Filesystem aufbauen : P09, 20.05.2024, 14d
     
-    section Datenanalyse
+    section Data-Wrangling
 
+        Explorative Datenenalyse : P10, 20.05.2024, 14d
         Datenqualität definieren : P10, 20.05.2024, 14d
         Datenbereinigung : P10, 20.05.2024, 14d
         Datenvorverarbeitung : P08, 20.05.2024, 14d
-        Implememtierung : crit, P10, 03.06.2024, 14d
-        Testing: P11, 10.06.2024, 14d
     
     section Modellierung
 
@@ -112,10 +111,8 @@ gantt
         Feature Engineering : P9, 03.06.2024, 14d
         Training + Testing : P9, 03.06.2024, 14d
         Evaluation : P9, 10.06.2024, 14d
-        Weboberfläche : P9, 27.05.2024, 14d
-        Fehlerbehebung : P13, 10.06.2024, 14d
+        Weboberfläche : P9, 10.06.2024, 14d
         Feedbackaufarbeitung : crit,P12, 17.06.2024, 14d
-        Optimierung : P14, 24.06.2024, 14d
         
     section Benchmarking und Dokumentation
 
