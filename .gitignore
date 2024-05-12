@@ -1,0 +1,2 @@
+# ignoriere lock-dateien, die libreoffice beim Öffnen von Dokumenten erstellt
+**/.~lock.*#
