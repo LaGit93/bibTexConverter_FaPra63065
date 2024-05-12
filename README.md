@@ -83,32 +83,42 @@ gantt
 %%        W9     : W9, 08.07.2024, 7d
 %%        W10    : W10, 15.07.2024, 7d
 
-    section Analyse
+    section Porjektinitiierung
+        Way Of Working : P01, 03.05.2024, 14d
+        Auswahl Tools + Plattformen : P01, 03.05.2024, 14d
+
+    section Analyse + Design
     
         Anforderungsanalyse: P01, 13.05.2024, 14d
-        Rohdaten (Text/Bild) aquirieren: P01, 13.05.2024, 14d
-        BibTex-Formate/Syntax : P03, 13.05.2024, 14d
-        Ansatz-Recherche : P05, 13.05.2024, 14d
-        Datenbereinigung : P07, 20.05.2024, 14d
+        Prozessbeschreibung: P02, 13.05.2024, 14d
+        Daten- und IT-Architektur : P03, 13.05.2024, 14d
+        Glossar erstellen : P05, 13.05.2024, 14d
+        Literangabeformate analysisieren : P06, 20.05.2024, 14d
+        Datenquellen bestimmen : P07, 13.05.2024, 14d
+        Web Scraping : P08, 13.05.2024, 14d
+        Webserver + Filesystem aufbauen : P09, 20.05.2024, 14d
     
-    section Implementierung 
-        
-        LLM-Screening : P07, 27.05.2024, 14d
-        Tokenisierung : P08, 27.05.2024, 14d
-        Weboberfläche : P9, 27.05.2024, 14d
-        Implememtierung : crit, P10, 03.06.2024, 14d
-        Testing: P11, 10.06.2024, 14d
+    section Data-Wrangling
+
+        Explorative Datenenalyse : P10, 20.05.2024, 14d
+        Datenqualität definieren : P10, 20.05.2024, 14d
+        Datenbereinigung : P10, 20.05.2024, 14d
+        Datenvorverarbeitung : P08, 20.05.2024, 14d
     
-    section Optimierung 
-        Fehlerbehebung : P13, 10.06.2024, 14d
-        Feedbackaufarbeitung : crit,P12, 17.06.2024, 14d
-        Optimierung : P14, 24.06.2024, 14d
+    section Modellierung
+
+        Eruierung und Modellauswahl : P9, 20.05.2024, 14d
+        Implementierung : P9, 03.06.2024, 14d
+        Feature Engineering : P9, 03.06.2024, 14d
+        Training + Testing : P9, 07.06.2024, 14d
+        Evaluation : P9, 10.06.2024, 14d
+        Weboberfläche : P9, 10.06.2024, 14d
+        Feedbackaufarbeitung : crit,P12, 17.06.2024, 21d
         
-    section Benchmarking und Dokumentation  
+    section Benchmarking und Dokumentation
+
         Benchmarking : P16, 01.07.2024, 14d
-        Texterkennung : P17, 01.07.2024, 14d
-        Visualisierung : P18, 01.07.2024, 14d
-        Abschlusspräsentation erstellen : P18, 08.07.2024, 7d
+        Abschluss-PPT : P18, 08.07.2024, 7d
 
 
 %%    section Lars
