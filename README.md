@@ -108,8 +108,9 @@ gantt
     section Modellierung
 
         Eruierung und Modellauswahl : P9, 20.05.2024, 14d
+        Implementierung : P9, 03.06.2024, 14d
         Feature Engineering : P9, 03.06.2024, 14d
-        Training + Testing : P9, 03.06.2024, 14d
+        Training + Testing : P9, 07.06.2024, 14d
         Evaluation : P9, 10.06.2024, 14d
         Weboberfläche : P9, 10.06.2024, 14d
         Feedbackaufarbeitung : crit,P12, 17.06.2024, 21d
