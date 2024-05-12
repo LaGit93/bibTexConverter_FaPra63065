@@ -1,0 +1,12 @@
+name: bibTexConverter
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12
+  - scikit-learn
+  - pandas
+  - tesseract
+  - requests
+  - pytest
+prefix: /scratch/work/miniconda3/envs/bibTexConverter
