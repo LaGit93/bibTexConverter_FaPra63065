@@ -95,7 +95,7 @@ gantt
         
         LLM-Screening : P07, 27.05.2024, 14d
         Tokenisierung : P08, 27.05.2024, 14d
-        Prompt Engineering : P9, 27.05.2024, 14d
+        Weboberfläche : P9, 27.05.2024, 14d
         Implememtierung : crit, P10, 03.06.2024, 14d
         Testing: P11, 10.06.2024, 14d
     
@@ -103,7 +103,6 @@ gantt
         Fehlerbehebung : P13, 10.06.2024, 14d
         Feedbackaufarbeitung : crit,P12, 17.06.2024, 14d
         Optimierung : P14, 24.06.2024, 14d
-        Weboberfläche : P15, 24.06.2024, 14d
         
     section Benchmarking und Dokumentation  
         Benchmarking : P16, 01.07.2024, 14d
