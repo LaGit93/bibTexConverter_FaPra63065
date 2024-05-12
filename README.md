@@ -86,9 +86,9 @@ gantt
     section Analyse
     
         Anforderungsanalyse: P01, 13.05.2024, 14d
-        Rohdaten (Text/Bild) aquirieren: P01, 13.05.2024, 14d
-        BibTex-Formate/Syntax : P03, 13.05.2024, 14d
-        Ansatz-Recherche : P05, 13.05.2024, 14d
+        Prozessbeschreibung: P01, 13.05.2024, 14d
+        Technische Architektur : P03, 13.05.2024, 14d
+        Prozessbeschreibung : P05, 13.05.2024, 14d
         Datenbereinigung : P07, 20.05.2024, 14d
     
     section Implementierung 
