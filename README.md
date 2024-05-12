@@ -107,6 +107,7 @@ gantt
         Testing: P11, 10.06.2024, 14d
     
     section Modellierung
+
         ML-Modelle auswählen und evaluieren : P9, 27.05.2024, 14d
         Feature Engineering : P9, 03.06.2024, 14d
         Training + Testing : P9, 03.06.2024, 14d
@@ -116,7 +117,8 @@ gantt
         Feedbackaufarbeitung : crit,P12, 17.06.2024, 14d
         Optimierung : P14, 24.06.2024, 14d
         
-    section Benchmarking und Dokumentation  
+    section Benchmarking und Dokumentation
+
         Benchmarking : P16, 01.07.2024, 14d
         Abschlusspräsentation erstellen : P18, 08.07.2024, 7d
 
