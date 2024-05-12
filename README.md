@@ -107,7 +107,7 @@ gantt
     
     section Modellierung
 
-        ML-Modelle auswählen und evaluieren : P9, 27.05.2024, 14d
+        Eruierung und Modellauswahl : P9, 27.05.2024, 14d
         Feature Engineering : P9, 03.06.2024, 14d
         Training + Testing : P9, 03.06.2024, 14d
         Evaluation : P9, 10.06.2024, 14d
