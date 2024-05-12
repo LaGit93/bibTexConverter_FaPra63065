@@ -112,12 +112,12 @@ gantt
         Training + Testing : P9, 03.06.2024, 14d
         Evaluation : P9, 10.06.2024, 14d
         Weboberfläche : P9, 10.06.2024, 14d
-        Feedbackaufarbeitung : crit,P12, 17.06.2024, 14d
+        Feedbackaufarbeitung : crit,P12, 17.06.2024, 21d
         
     section Benchmarking und Dokumentation
 
         Benchmarking : P16, 01.07.2024, 14d
-        Abschlusspräsentation erstellen : P18, 08.07.2024, 7d
+        Abschluss-PPT : P18, 08.07.2024, 7d
 
 
 %%    section Lars
