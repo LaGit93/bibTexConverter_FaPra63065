@@ -1,6 +1,11 @@
 # BibTexConverter
+
+---
+
 ## Kurzbeschreibung
 Der BibTexConverter dient zur Übersetzung von Literaturverzeichnis-Einträgen in BibTex-Einträge, die in Folge für die Erstellung von Literaturverzeichnissen in eigenene Dokumenten verwendet werden können. Dem BibTexConverter können die zu konvertierenden Einträge über das Clipboard sowohl in Textform, als auch in Bildform (z.B. Ausschnitt aus einem Screenshot) als Eingabe zur Verfügung gestellt werden. 
+
+---
 
 ## Lösungsbeschreibung
 Der Konverter muss dabei die Informationen aus Literaturverzeichniseinträgen in einzelne Bestandteile zerlegen und den Attributen der BibTex-Struktur zuordnen können. Dazu sollte er möglichst viele der verwendeten Formate und Formatvarianten erkennen können. Im Fall von als Bildaten angegebenen Literaturverzeichnis-Komponenten ist die Erkennung des Textes in Images (OCR) zur Vorverarbeitung, um sie dann entsprechend weiter verarbeiten zu können. Der grobe Ablauf der Logik ist damit:
@@ -27,17 +32,155 @@ Für die Extraktion der BibTex-Attribute sind mehrere Lösungsansätze denkbar, 
 ### Nachbereitung und Überführung des Ergebnisses in das BibTex-Format
 Ggf. müssen die extrahierten Daten noch normiert bzw. nachbereitet werden und in das BibTex-Fromat überführt werden, wenn das verwendete Modell die erforderlichen Schritte nicht selbst abdeckt. Zu möglichen Normierungen bzw. Nachbereitungen zählen Beispielsweise die Vervollständigung von Konverenznamen und ggf. die Schreibweise bei mehreren Autoren (teilweise wird und, and oder & verwendet, um mehrere Autoren anzugeben). 
 
+---
 
 ## Roadmap
-17.04.             Kickoff (Call)
-25.04.             Themenauswahl & Gruppenbildung
-02.05. 14:00-15:30 Pitches (Call)
-13.05.             Projektplan angefertigt
-17.05.             Feedback Projektplan
-13.06. 17:00-18:30 Prototyp Pitches "Durchstich" (Call)
-21.06.             Peer-Feedback
-18.07.  8:00-10:00 Abschlussdemo (Call)
-Semesterende Abgabe Dokumentation
+| Datum  | Uhrzeit     | Termin                         |
+|:-------|:------------|:-------------------------------|
+| 17.04. |             | Kickoff (Call)                 |
+| 25.04. |             | Themenauswahl & Gruppenbildung |
+| 02.05. | 14:00-15:30 | Pitches (Call)                 |
+| 13.05. |             | Projektplan angefertigt        |
+| 17.05. |             | Feedback Projektplan           |
+| 13.06. | 17:00-18:30 | Prototyp Pitches "Durchstich"  |
+| 21.06. |             | Peer-Feedback                  |
+| 18.07. | 8:00-10:00  | Abschlussdemo (Call)           |
+| 30.09. |             | Abgabe Dokumentation           |
+
+### Projektverlauf
+
+```mermaid
+gantt
+    
+    dateFormat  DD.MM.YYYY
+    axisFormat %d.%m
+    %%tickInterval 1week
+    %%weekday monday
+    
+    title       BibTexConverter
+    %%excludes    weekends
+    todayMarker stroke-width:5px,stroke:#0f0,opacity:0.5
+    %% oder todayMarker off 
+    
+    
+    section Orga-Milestones
+        Gruppenbildung  :des1, 26.04.2024,  5d
+        Fertigstellung Projektplan:       milestone, m2, 13.05.2024,
+        Durchstich-Pitch : milestone, m5, 13.06.2024, 
+        Abschlussdemo:     milestone, m10, 18.07.2024,
+        Beginn Dokumentation:     milestone, m20, 22.07.2024,
+        %%Abgabe Dokumention:   milestone, m20, 30.09.2024,  
+    
+%%    section Wochenübersicht
+%%        W1     : W1, 13.05.2024, 7d
+%%        W2     : W2, 20.05.2024, 7d
+%%        W3     : W3, 27.05.2024, 7d
+%%        W4     : W4, 03.06.2024, 7d
+%%        W5     : W5, 10.06.2024, 7d
+%%        W6     : W6, 17.06.2024, 7d
+%%        W7     : W7, 24.06.2024, 7d
+%%        W8     : W8, 01.07.2024, 7d
+%%        W9     : W9, 08.07.2024, 7d
+%%        W10    : W10, 15.07.2024, 7d
+
+    section Analyse
+    
+        Anforderungsanalyse: P01, 13.05.2024, 14d
+        Rohdaten (Text/Bild) aquirieren: P01, 13.05.2024, 14d
+        BibTex-Formate/Syntax : P03, 13.05.2024, 14d
+        Ansatz-Recherche : P05, 13.05.2024, 14d
+        Datenbereinigung : P07, 20.05.2024, 14d
+    
+    section Implementierung 
+        
+        LLM-Screening : P07, 27.05.2024, 14d
+        Tokenisierung : P08, 27.05.2024, 14d
+        Prompt Engineering : P9, 27.05.2024, 14d
+        Implememtierung : crit, P10, 03.06.2024, 14d
+        Testing: P11, 10.06.2024, 14d
+    
+    section Optimierung 
+        Fehlerbehebung : P13, 10.06.2024, 14d
+        Feedbackaufarbeitung : crit,P12, 17.06.2024, 14d
+        Optimierung : P14, 24.06.2024, 14d
+        Weboberfläche : P15, 24.06.2024, 14d
+        
+    section Benchmarking und Dokumentation  
+        Benchmarking : P16, 01.07.2024, 14d
+        Texterkennung : P17, 01.07.2024, 14d
+        Visualisierung : P18, 01.07.2024, 14d
+        Abschlusspräsentation erstellen : P18, 08.07.2024, 7d
+
+
+%%    section Lars
+%%        Task1    : L1, 13.05.2024, 7d
+%%        Task2    : L2, after L1, 7d
+%%        Task3    : L3, after L2, 7d
+        
+%%    section David
+%%        Task1    : D1, 13.05.2024, 7d
+%%        Task2    : D2, after D1, 7d
+%%        Task3    : D3, after D2, 7d
+
+%%    section Jürgen
+%%        Task1    : J1, 13.05.2024, 7d
+%%        Task2    : J2, after J1, 7d
+%%        Task3    : J3, after J2, 7d
+
+%%    section Constantin
+%%        Task1    : C1, 13.05.2024, 7d
+%%       Task2    : C2, after C1, 7d
+%%       Task3    : C3, after C2, 7d
+
+    
+```
+
+### Projektphasen
+
+#### Phase 1: Analyse
+
+* Anforderungsanalyse: <br> Beschreibung
+* Rohdaten (Text/Bild) aquirieren: <br> Beschreibung
+* BibTex-Formate/Syntax: <br> Beschreibung  
+* Ansatz-Recherche: <br> Beschreibung 
+* Datenbereinigung: <br> Beschreibung
+
+#### Phase 2: Implementierung        
+* LLM-Screening: <br> Beschreibung 
+* Tokenisierung: <br> Beschreibung 
+* Prompt Engineering: <br> Beschreibung  
+* Implememtierung: <br> Beschreibung 
+* Testing: <br> Beschreibung
+
+#### Phase 3 : Optimierung 
+* Fehlerbehebung: <br> 
+  Beschreibung 
+* Feedbackaufarbeitung: <br> Beschreibung
+* Optimierung: <br> Beschreibung 
+* Weboberfläche: <br> Beschreibung 
+
+#### Phase 4 : Benchmarking und Dokumentation
+* Benchmarking: <br> Beschreibung
+* Texterkennung: <br> Beschreibung 
+* Visualisierung: <br> Beschreibung 
+* Abschlusspräsentation erstellen: <br> Beschreibung 
+
+---
+
+## Backlog Priorisierungen
+
+### Prio1
+
+### Prio2
+
+* Texterkennung von Bildern
+
+### Prio3
+* Texterkennung von pdf
+* Vervollständigung von Vornamen
+* Abgleich mit Google-Scholar
+
+---
 
 ## Verzeichnisstruktur
 ### dokumentation
@@ -59,13 +202,14 @@ Sourcen für unittests (pytest).
 Ablageort für trainierte Modelle zur Wiederherstellung (pickle dumps etc).
 
 
-
+---
 
 ## Quellen für Testdaten
 https://aclanthology.org/
 https://writemd.rz.tuhh.de/jkQeRnMWQ8a2sJFD4crhhg?both
 
 
+---
 
 ## Sonstiges
 Link zur Modulseite:
