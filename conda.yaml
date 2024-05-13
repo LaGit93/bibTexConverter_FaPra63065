@@ -4,9 +4,10 @@ channels:
   - conda-forge
 dependencies:
   - python=3.12
-  - scikit-learn
-  - pandas
-  - tesseract
-  - requests
-  - pytest
-prefix: /scratch/work/miniconda3/envs/bibTexConverter
+  - scikit-learn=1.4.2
+  - pandas=2.2.1
+  - tesseract=5.2.0
+  - requests=2.27.1
+  - pytest=7.4.0
+  - black=19.3b
+  - flake8=3.8.3
