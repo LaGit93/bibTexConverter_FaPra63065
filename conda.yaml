@@ -18,3 +18,4 @@ dependencies:
 # fastapi (für einfache REST-APIs)
 # tkinter (falls wir standalone-GUIs entwickeln)
 # flask (für WEB-Anwendungen - aber ggf. reicht das alleine nicht um copy-paste-fähige Frontends zu entwickeln)
+# yaml (zum Lesen/Schreiben von yaml-Dateien zur Konfiguration - z.B. zur Konfiguration der Verarbeitungs-Pipeline)
