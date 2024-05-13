@@ -93,10 +93,10 @@ gantt
         Prozessbeschreibung: P02, 13.05.2024, 14d
         Daten- und IT-Architektur : P03, 13.05.2024, 14d
         Glossar erstellen : P05, 13.05.2024, 14d
-        Literangabeformate analysisieren : P06, 20.05.2024, 14d
         Datenquellen bestimmen : P07, 13.05.2024, 14d
         Web Scraping : P08, 13.05.2024, 14d
         Webserver + Filesystem aufbauen : P09, 20.05.2024, 14d
+        Literangabeformate analysisieren : P10, 20.05.2024, 14d
     
     section Data-Wrangling
 
