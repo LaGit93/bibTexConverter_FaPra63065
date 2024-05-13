@@ -1,0 +1,10 @@
+directories:
+    raw_data=./rohdaten/
+download_raw_data:
+    semantic_schoolar:
+        initial_document_ids
+            - 204e3073870fae3d05bcbc2f6a8e263d9b72e776 # article: attention is all you need
+            - 68b07bb990ee6c7fce28ea56c9a7808f607f0eac # article: google file system
+            - 3ce7c6ff983fc93e291fa0e2ebca4a389 # buch
+            - 83721103a6fd5535e943b1b575cf70862c2322a8 # buch
+            - 1faac79e97d4140c2e275e7cc7f02f512ad61e09 # buch
