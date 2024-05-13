@@ -199,7 +199,7 @@ dann nach Aktivieren von conda (Üblicherweise muss die Shell nach der Installat
 über das Start-Menü eine spezielle Conda-Shell gestartet werden, dann vom git-root-Verzeichnis, in dem sich die Datei conda.yaml
 befindet folgendes ausführen: 
 
-	conda env create -h -f conda.yaml -n bibTexConverter
+	conda env create -f conda.yaml -n bibTexConverter
 	conda activate bibTexConverter
 
 Der zweite Befehl muss ggf. jedes mal vor dem Start der Arbeit eingegeben werden. 
