@@ -11,3 +11,10 @@ dependencies:
   - pytest=7.4.0
   - black=19.3b
   - flake8=3.8.3
+# Weitere Kandidaten für Pakete, die wir brauchen könnten sein:
+# beautiful soup (für Web-Scraping)
+# pdfplumber (für pdf-Scraping)
+# pytoorch bzw tensorflow (für NER oder LLMs)
+# fastapi (für einfache REST-APIs)
+# tkinter (falls wir standalone-GUIs entwickeln)
+# flask (für WEB-Anwendungen - aber ggf. reicht das alleine nicht um copy-paste-fähige Frontends zu entwickeln)
