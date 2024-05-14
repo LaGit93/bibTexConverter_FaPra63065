@@ -53,14 +53,14 @@ def write_global_config():
     write_config(CONFIG)
 
 
-def read_config(path : Path=PATH_CONFIG_FILE):
+def read_config(path: Path = PATH_CONFIG_FILE):
     """
     Read the configuration
 
     Parameters
     ----------
     path : Path, optional
-        Path to the yaml file that contains the config values. 
+        Path to the yaml file that contains the config values.
         The default is path_config_dir.
 
     Returns
@@ -72,7 +72,7 @@ def read_config(path : Path=PATH_CONFIG_FILE):
     return config
 
 
-def write_config(config : dict, path : Path=PATH_CONFIG_FILE):
+def write_config(config: dict, path: Path = PATH_CONFIG_FILE):
     """
     Read the configuration
 
@@ -80,9 +80,9 @@ def write_config(config : dict, path : Path=PATH_CONFIG_FILE):
     ----------
     config : dict
         Configuration.
-        
+
     path : Path, optional
-        Path to the yaml file that contains the config values. 
+        Path to the yaml file that contains the config values.
         The default is path_config_dir.
 
     Returns
@@ -91,5 +91,3 @@ def write_config(config : dict, path : Path=PATH_CONFIG_FILE):
     """
     with path.open("wt") as fp_yaml:
         yaml.dump(config, fp_yaml)
-
-
