@@ -1,3 +1,6 @@
 # ignoriere lock-dateien, die libreoffice beim Öffnen von Dokumenten erstellt
 **/.~lock.*#
 **/.spyproject
+**/__pycache__/
+**/__pycache__/**
+**/*.pyc

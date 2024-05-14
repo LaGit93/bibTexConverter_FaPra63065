@@ -8,7 +8,7 @@ import logging
 import requests as rq
 import json
 from typing import List, Set
-from random import choice
+import random
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
@@ -65,7 +65,7 @@ def collect_documents(
 
     while document_id_pool and n_documents > 0:
         # es sind keine Dokumente auszuwählen
-        next_doc_id = choice(document_id_pool)
+        next_doc_id = random.choice(document_id_pool)
         document_id_pool.remove(next_doc_id)
 
         logger.info("hole Daten zu Dokument %s", next_doc_id)
@@ -91,6 +91,11 @@ def collect_documents(
 
 
 logger.info("verwende Konfiguration %s", cfg.CONFIG)
+
+if "random_seed" in cfg.CONFIG["download_raw_data"]:
+    seed = cfg.CONFIG["download_raw_data"]["random_seed"]
+    logger.info("Setze random seed auf %s für Reproduzierbarkeit", seed)
+    random.seed(seed)
 
 document_ids = cfg.CONFIG["download_raw_data"]["semantic_schoolar"][
     "initial_document_ids"
