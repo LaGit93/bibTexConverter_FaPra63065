@@ -202,7 +202,7 @@ befindet folgendes ausführen:
 	conda env create -f conda.yaml -n bibTexConverter
 	conda activate bibTexConverter
 
-Der zweite Befehl muss ggf. jedes mal vor dem Start der Arbeit eingegeben werden. 
+Der zweite Befehl muss ggf. jedes mal vor dem Start der Arbeit eingegeben werden. Ggf. muss beim ersten Befehl noch `--solver classic` angehängt werden, falls beim Ausführen der Zeile eine Fehlermeldung bezüglich des Solvers erscheint.
 
 ### dokumentation
 Verzeichnis für die Beschreibung der Lösung und die Planung der Umsetzung etc.
@@ -228,6 +228,7 @@ Ablageort für trainierte Modelle zur Wiederherstellung (pickle dumps etc).
 ## Quellen für Testdaten
 https://aclanthology.org/
 https://writemd.rz.tuhh.de/jkQeRnMWQ8a2sJFD4crhhg?both
+https://www.infobooks.org/free-pdf-books/computers/machine-learning/?utm_content=cmp-true
 
 
 ---

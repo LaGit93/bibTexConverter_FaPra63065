@@ -6,12 +6,13 @@ dependencies:
   - conda-libmamba-solver
   - python=3.12
   - scikit-learn=1.4.2
-  - pandas=2.2.1
-  - tesseract=5.2.0
-  - requests=2.27.1
-  - pytest=7.4.0
-  - black=19.3b
-  - flake8=3.8.3
+  - pandas=2.2
+  - tesseract=5.2
+  - requests=2.31
+  - pyyaml=6.0
+  - pytest=7.4
+  - black=24.3
+  - flake8=7.0
 # Weitere Kandidaten für Pakete, die wir brauchen könnten sein:
 # pytoorch bzw tensorflow (für NER oder LLMs)
 # ggf. eine spezialisierte Bibliothek für hyperparameter Optimierung wie optuna oder hyperopt
@@ -25,9 +26,6 @@ dependencies:
 # fastapi (für einfache REST-APIs)
 # tkinter (falls wir standalone-GUIs entwickeln)
 # flask (für WEB-Anwendungen - aber ggf. reicht das alleine nicht um copy-paste-fähige Frontends zu entwickeln)
-#
-# Sonstiges:
-# yaml (zum Lesen/Schreiben von yaml-Dateien zur Konfiguration - z.B. zur Konfiguration der Verarbeitungs-Pipeline)
 #
 # Rein für die Entwicklung könnten wir vielleicht folgendes benötigen:
 # jupyter-lab
