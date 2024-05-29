@@ -1,4 +1,3 @@
 Hier liegen Trainingsdaten zu verschiedenen Styles ab.
-Die Anthology-Files enthalten nur Article (ca. 2%), Proceedings (ca. 2%) und überwiegend Inproceedings. Teil 1 umfasst jeweils die ersten 50k Einträge, Teil 2 die übrigen ca. 43k.
-Die SemanticScholar-Files umfassen nur Article.
+Jedes File enthält Trainingsdaten zu einem bestimmten Stil (ca. 1000 Beispiele pro Literaturtyp).
 Alle Files sind csv-Dateien im UTF-8 Format und mit | als Trenner.
