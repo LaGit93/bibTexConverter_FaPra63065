@@ -42,7 +42,7 @@ def is_punctuation(text, replaceCharacter = []):
         allowed_chars = allowed_chars.replace(character, '')
     return all(char in allowed_chars for char in text)
 
-def is_Editor(editorRegEx, textBetweenNames, index):
+def is_Editor(editorRegEx, textBetweenNames, index, text):
     if re.search(editorRegEx, textBetweenNames):
         x = re.search(editorRegEx, text)
         #print(f'x: {x.start()}')
@@ -54,9 +54,10 @@ def processNames(authors):
     finalAuthors = ""
     search_terms = [" and ", ", and ", " & ", ", & "]
     andInAuthors = find_First_Term(authors, search_terms)[2]
-    surenameFirst = is_SurenameFirst(authors)
-    #print(f'surenameFirst: {surenameFirst}')
+    surenameFirst = is_SurenameFirst(authors.strip())
+    print(f'function processNames, surenameFirst: {surenameFirst}')
     if surenameFirst:
+        print("Fall surenameFirst".format(authors))
         #hier völlig egal, ob er einzelne Initialen in ein eigenes Word gesteckt hat, obwohl es noch Nachnamen gib
         authors = authors.replace(andInAuthors, " and ")
         #print(f'authors: {authors}')
@@ -129,7 +130,7 @@ def getAuthorsAndEditors(df_PER, text):
         if not onlyPunctuation and not onlyAnd:
             setChainStart = True
             #Es können auch nur Editoren und keine Autoren vorkommen
-            authorsDetected = not is_Editor(editorRegEx, textBetweenNames, df_PER["end"].iloc[index])
+            authorsDetected = not is_Editor(editorRegEx, textBetweenNames, df_PER["end"].iloc[index], text)
             #print(f'getAuthorsAndEditors: authorsDetected: {authorsDetected}')
             #print(f'getAuthorsAndEditors: is_Editor: {is_Editor(editorRegEx, textBetweenNames, df_PER["end"].iloc[index])}')
             #print(f'getAuthorsAndEditors: chainStartIndex: {chainStartIndex}')
@@ -138,7 +139,7 @@ def getAuthorsAndEditors(df_PER, text):
                 startIndexAuthors = chainStartIndex
                 endIndexAuthors = df_PER["end"].iloc[index]
             #nicht nur ein else, falls Namen im Titel des Buches auftauchen
-            elif is_Editor(editorRegEx, textBetweenNames, df_PER["end"].iloc[index]):
+            elif is_Editor(editorRegEx, textBetweenNames, df_PER["end"].iloc[index], text):
                 startIndexEditors = chainStartIndex
                 endIndexEditors = df_PER["end"].iloc[index]
                 break
@@ -192,15 +193,15 @@ def getIndexOfSubstring(text, regEx = [], reverse = False):
 
 def create_bibtex(text):
     ner_tagger = pipeline("ner", aggregation_strategy="simple")
-    print(text)
+    #print(text)
     outputs = ner_tagger(text)
     df_outputs = pd.DataFrame(outputs)
-    print(df_outputs)
+    #print(df_outputs)
     #index neu setzen, da diese nicht automatich geupdates werden
     df_PER = df_outputs[df_outputs["entity_group"] == "PER"].reset_index(drop=True)
 
 
-    print(df_PER)
+    #print(df_PER)
 
     doiUrlRegEx = "https:\/\/doi\.org(\/[^\s]*)?$"
     doiUrlRegEx2 = "(DOI|doi):(https:\/\/doi\.org)?([^\s]*)+$"
@@ -225,7 +226,6 @@ def create_bibtex(text):
         text, editors = replaceSubstring(startIndexEditors, endIndexEditors, text, ".#")
         endIndexEditors = endIndexEditors - len(editors)
         print(f'text after replace editors : {text}')
-        print(f'endIndexEditors : {endIndexEditors}')
         #es soll erst ab Editors gesucht werden, daher text[endIndexEditors:]. Sonst Verwechslungsgefahr
         print(f'text[endIndexEditors:] : {text[endIndexEditors:]}')
         startIndexEditorMarker, endIndexEditorMarker = getIndexOfSubstring(text[endIndexEditors:], [editorRegEx])
@@ -234,8 +234,10 @@ def create_bibtex(text):
         startIndexEditorMarker = startIndexEditorMarker + endIndexEditors
         endIndexEditorMarker = endIndexEditorMarker + endIndexEditors
         print(f'startIndexEditorMarker : {startIndexEditorMarker}')
-        print(f'endIndexEditorMarker : {endIndexEditorMarker}')
+        print(f'endIndexEditorMarker : {endIndexEditorMarker} \r\n')
+        print(f'editors: {editors}')
         finalEditors = processNames(editors)
+        print(f'finalEditors : {finalEditors} \r\n')
         text, replacedEditorMarker = replaceSubstring(startIndexEditorMarker, endIndexEditorMarker, text, ".#")
         print(f'text after replace EditorMarker : {text}')
 
@@ -246,12 +248,12 @@ def create_bibtex(text):
 
     startIndex, endIndex = getIndexOfSubstring(text, [doiUrlRegEx, doiUrlRegEx2], True)
     text, finalDoi = replaceSubstring(startIndex, endIndex, text, "#")
-    print(f'text after replace DOI: {text}')
+    #print(f'text after replace DOI: {text}')
 
     urlRegEx = "https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?::\d+)?(?:/[^\s]*)?"
     startIndex, endIndex = getIndexOfSubstring(text, [urlRegEx], True)
     text, finalURL = replaceSubstring(startIndex, endIndex, text, ".#")
-    print(f'text after replace DOI: {text}')
+    #print(f'text after replace DOI: {text}')
 
     startIndex, endIndex = getIndexOfSubstring(text, [year1])
     if startIndex < 0:
@@ -263,9 +265,9 @@ def create_bibtex(text):
 
     startIndex, endIndex = getIndexOfSubstring(text, [pageFinder], True)
     text, finalPage = replaceSubstring(startIndex, endIndex, text, ".#")
-    finalPage = re.search(r'\d+', finalPage).group(0) if re.search(r'\d+', finalPage) else ""
+    finalPage = re.search(r'\d+(-|–)\d+', finalPage).group(0) if re.search(r'\d+', finalPage) else ""
 
-    print(f'text after replace Page: {text}')
+    #print(f'text after replace Page: {text}')
 
     number1 = " no\. \d+"
     number2 = " Issue \d+"
@@ -276,7 +278,7 @@ def create_bibtex(text):
     text, finalNumber = replaceSubstring(startIndex, endIndex, text, ".#")
     finalNumber = re.search(r'\d+', finalNumber).group(0) if re.search(r'\d+', finalNumber) else ""
 
-    print(f'text after replace Number: {text}')
+    #print(f'text after replace Number: {text}')
 
     volume1 = "Vol\. \d+"
     volume2 = "vol\. \d+" 
@@ -288,13 +290,13 @@ def create_bibtex(text):
     text, finalVolume = replaceSubstring(startIndex, endIndex, text, ".#")
     finalVolume = re.search(r'\d+', finalVolume).group(0) if re.search(r'\d+', finalVolume) else ""
 
-    print(f'text after replace Volume: {text}')
+    #print(f'text after replace Volume: {text}')
 
     startIndex, endIndex = getIndexOfSubstring(text, [edition1, edition2], True)
     text, finalEdition = replaceSubstring(startIndex, endIndex, text, ".#")
     finalEdition = re.search(r'\d+', finalEdition).group(0) if re.search(r'\d+', finalEdition) else ""
 
-    print(f'text after replace Edition: {text}')
+    #print(f'text after replace Edition: {text}')
     text = text.replace('(', '.')
     text = text.replace(')', '.')
     text = re.sub(r'\.{2,}', '.', text)
@@ -331,4 +333,3 @@ def create_bibtex(text):
 + ", \r\n" + f'doi: {finalDoi}' +  ", \r\n"  +  f'year: {finalYear}' +  ", \r\n"  + f'number : {finalNumber}' \
 +  ", \r\n" + f'volume : {finalVolume}' +  ", \r\n"  + f'edition: {finalEdition}' +  ", \r\n"  + f'page: {finalPage}' \
 +  ", \r\n"  + f'url: {finalURL}' +  ", \r\n"  + f'publisher: {finalPublisher}'
-
