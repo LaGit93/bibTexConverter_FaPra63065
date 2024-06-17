@@ -7,13 +7,14 @@ dependencies:
   - python=3.12
   - scikit-learn=1.4.2
   - pandas=2.2
-  - tesseract=5.2
+  - tesseract=5.4
   - requests=2.31
   - pyyaml=6.0
   - pytest=7.4
   - black=24.3
   - flake8=7.0
   - flask=3.0.3
+  - spacy=3.7.5
 # Weitere Kandidaten für Pakete, die wir brauchen könnten sein:
 # pytoorch bzw tensorflow (für NER oder LLMs)
 # ggf. eine spezialisierte Bibliothek für hyperparameter Optimierung wie optuna oder hyperopt
