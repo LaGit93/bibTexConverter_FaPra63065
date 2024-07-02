@@ -1,3 +1,5 @@
+README mit Installationsanleitung inklusive Vorbedingungen, externe Abhängigkeiten
+
 ## Verzeichnisstruktur und Dateien
 conda.yaml: 
 Zum Reproduzierbaren Aufbau einer Umgebung mit allen benötigten Bibliotheken
