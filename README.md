@@ -1,7 +1,7 @@
-README mit Installationsanleitung inklusive Vorbedingungen, externe Abhängigkeiten
+##Installationsanleitung 
+(inklusive Vorbedingungen, externe Abhängigkeiten)
 
-## Verzeichnisstruktur und Dateien
-conda.yaml: 
+Die für die unterschiedlichen Aufgaben verwendeten Python-Bibliotheken sind in der Datei conda.yaml zusammengestellt. 
 Zum Reproduzierbaren Aufbau einer Umgebung mit allen benötigten Bibliotheken
 Zur Verwendung, miniconda installieren, wie auf URL https://docs.anaconda.com/free/miniconda/miniconda-install/ beschrieben,
 dann nach Aktivieren von conda (Üblicherweise muss die Shell nach der Installation neu gestartet werden, bzw unter Windows
