@@ -15,20 +15,5 @@ dependencies:
   - flake8=7.0
   - flask=3.0.3
   - spacy=3.7.5
-# Weitere Kandidaten für Pakete, die wir brauchen könnten sein:
-# pytoorch bzw tensorflow (für NER oder LLMs)
-# ggf. eine spezialisierte Bibliothek für hyperparameter Optimierung wie optuna oder hyperopt
-# dvc (Versionierung von Daten und Verknüpfung der Versionen mit den Source-Versionen über git)
-#
-# scraping:
-# beautiful soup (für Web-Scraping)
-# pdfplumber (für pdf-Scraping)
-#
-# Benutzeroberfläche:
-# fastapi (für einfache REST-APIs)
-# tkinter (falls wir standalone-GUIs entwickeln)
-# flask (für WEB-Anwendungen - aber ggf. reicht das alleine nicht um copy-paste-fähige Frontends zu entwickeln)
-#
-# Rein für die Entwicklung könnten wir vielleicht folgendes benötigen:
-# jupyter-lab
-# spyder (einfache Entwicklungsumgebung)
+  - pybtex=0.24.0
+  
