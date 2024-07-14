@@ -6,6 +6,7 @@ import re
 import string
 import spacy
 
+# jetzt sollte es gehen
 
 def create_bibtex_loop(multi_refstrings):
 
