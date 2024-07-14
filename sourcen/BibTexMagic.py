@@ -7,6 +7,20 @@ import string
 import spacy
 
 
+def create_bibtex_loop(multi_refstrings):
+
+    split_refstrings = multi_refstrings.split('\r\n')
+    split_refstrings = list(filter(None, split_refstrings))
+    
+    multi_outstring = ""
+
+    for element in split_refstrings:
+    
+       multi_outstring = multi_outstring + create_bibtex(element) + "\n\n"
+
+    return multi_outstring
+
+
 def find_First_Term(text, search_terms):
     # Initialisiere mit einem hohen Wert
     min_index = float('inf')
