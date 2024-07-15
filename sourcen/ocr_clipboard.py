@@ -1,6 +1,5 @@
 from PIL import ImageGrab
 import pytesseract
-from io import BytesIO
 import re
 import pandas as pd
 
@@ -54,19 +53,6 @@ def language_names():
     return language_names_en
 
 
-def lang_name2code(lang_name):
-    # Umwandlung der Sprachauswahl in Language Code
-
-    spalten = ['Language Name', 'Language Code']
-    lang_names_en = language_names()
-    lang_codes = language_codes()
-
-    df = pd.DataFrame(list(zip(lang_names_en, lang_codes)), columns=spalten)
-    language = df.loc[df['Language Name'] == lang_name, 'Language Code'].values[0]
-
-    return language
-
-
 def remove_enumeration(text):
     # Entfernt Aufzählungen aus String
     #
@@ -86,8 +72,7 @@ def remove_enumeration(text):
 
 def newocr(selected_language):
     # DataFrame aus Language_Code und Language_Name erstellen
-    df_languages = pd.DataFrame(list(zip(language_codes(), language_names())),
-                                columns=['Language Code', 'Language Name'])
+    df_languages = pd.DataFrame(list(zip(language_codes(), language_names())),columns=['Language Code', 'Language Name'])
 
     # Inhalt der Zwwischenablage als Bild importieren
     img = ImageGrab.grabclipboard()
