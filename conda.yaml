@@ -3,17 +3,17 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - conda-libmamba-solver
-  - python=3.12
-  - scikit-learn=1.4.2
+  - conda
+  - python_abi=3.10
+  - python=3.10.1
   - pandas=2.2
   - tesseract=5.4
-  - requests=2.31
   - pyyaml=6.0
-  - pytest=7.4
-  - black=24.3
-  - flake8=7.0
   - flask=3.0.3
-  - spacy=3.7.5
   - pybtex=0.24.0
-  
+  - pytorch
+  - transformers
+  - pytesseract=0.3.10
+  - pillow=10.4.0
+  - spacy=3.5.1
+  - spacy-model-en_core_web_sm=3.5.0
