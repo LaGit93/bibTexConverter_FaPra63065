@@ -5,36 +5,6 @@ import re
 import pandas as pd
 
 
-# import pyperclip
-
-# Screenshot aus der Zwischenablage erhalten
-
-def clipboard2text(lang_set):
-    screenshot = ImageGrab.grabclipboard()
-
-    if screenshot is not None:  # Bild in Bytes konvertieren
-        img_byte_arr = BytesIO()
-        screenshot.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
-
-        # Texterkennung mit pytesseract
-        text = pytesseract.image_to_string(screenshot, lang=lang_set)
-
-        if text == "":
-            text = "No valid image in clipboard"
-        # Text in die Zwischenablage kopieren
-        # pyperclip.copy(text)
-
-        # print("Erkannter Text:")
-        # print(text)
-
-    else:
-        text = "No valid image in clipboard"
-        # print("Kein gültiges Bild in der Zwischenablage gefunden.")
-
-    return text
-
-
 def language_codes():
     # Liste mit den 30 häufigsten Sprachen in deutscher Abkürzung
     language_codes_de = [
@@ -66,6 +36,7 @@ def language_names():
         'Türkisch', 'Ukrainisch', 'Vietnamesisch'
     ]
 
+    # Englische Namen der Sprachen
     language_names_en = [
         'English', 'Afrikaans', 'Arabic', 'Bengali', 'Bulgarian', 'Catalan', 'Czech', 'Chinese (Simplified)',
         'Chinese (Traditional)', 'Cherokee', 'Danish',
@@ -78,13 +49,13 @@ def language_names():
         'Albanian', 'Serbian (Latin)', 'Swedish', 'Tamil', 'Telugu', 'Tagalog', 'Thai', 'Turkish', 'Ukrainian',
         'Vietnamese'
     ]
-
-    # language_names_de = [ 'english', 'german']
+    # Falls die Auswahl der Sprache auf Deutsch umgestellt werden soll:
+    # return_language_names_de
     return language_names_en
 
 
 def lang_name2code(lang_name):
-    # Erstelle einen DataFrame
+    # Umwandlung der Sprachauswahl in Language Code
 
     spalten = ['Language Name', 'Language Code']
     lang_names_en = language_names()
@@ -96,47 +67,40 @@ def lang_name2code(lang_name):
     return language
 
 
+def remove_enumeration(text):
+    # Entfernt Aufzählungen aus String
+    #
+    lines = text.split('\n')
+    result = []
+    for line in lines:
+        # Entfernt führende Zahlen mit Punkt oder eckigen Klammern und Leerzeichen
+        cleaned_line = re.sub(r'^\s*\d+\.\s*|\[\d+\]\s*', '', line)
+
+        # Entfernt Leerzeichen am Anfang und Ende der Zeile
+        cleaned_line = cleaned_line.strip()
+
+        result.append(cleaned_line)
+    result = list(filter(None, result))
+    return '\n\n'.join(result)
+
+
 def newocr(selected_language):
-    # Erstelle eine Liste der 30 wichtigsten Sprachen mit den deutschen Namen
-    languages = [
-        'afr', 'ara', 'ben', 'bul', 'cat', 'ces', 'chi_sim', 'chi_tra', 'chr', 'dan',
-        'deu', 'ell', 'eng', 'enm', 'epo', 'equ', 'est', 'eus', 'fin', 'fra',
-        'frk', 'frm', 'glg', 'grc', 'heb', 'hin', 'hrv', 'hun', 'ind', 'isl',
-        'ita', 'ita_old', 'jpn', 'kan', 'kor', 'lav', 'lit', 'mal', 'mkd', 'mlt',
-        'msa', 'nld', 'nor', 'pol', 'por', 'ron', 'rus', 'slk', 'slv', 'spa',
-        'sqi', 'srp', 'swe', 'tam', 'tel', 'tgl', 'tha', 'tur', 'ukr', 'vie',
-    ]
+    # DataFrame aus Language_Code und Language_Name erstellen
+    df_languages = pd.DataFrame(list(zip(language_codes(), language_names())),
+                                columns=['Language Code', 'Language Name'])
 
-    # Namen der Sprachen
-    language_names = [
-        'Afrikaans', 'Arabic', 'Bengali', 'Bulgarian', 'Catalan', 'Czech', 'Chinese (Simplified)',
-        'Chinese (Traditional)', 'Cherokee', 'Danish',
-        'German', 'Greek', 'English', 'Middle English', 'Esperanto', 'Math / Equation', 'Estonian', 'Basque', 'Finnish',
-        'French',
-        'Frankish', 'Middle French', 'Galician', 'Ancient Greek', 'Hebrew', 'Hindi', 'Croatian', 'Hungarian',
-        'Indonesian', 'Icelandic',
-        'Italian', 'Old Italian', 'Japanese', 'Kannada', 'Korean', 'Latvian', 'Lithuanian', 'Malayalam', 'Macedonian',
-        'Maltese',
-        'Malay', 'Dutch', 'Norwegian', 'Polish', 'Portuguese', 'Romanian', 'Russian', 'Slovak', 'Slovenian', 'Spanish',
-        'Albanian', 'Serbian (Latin)', 'Swedish', 'Tamil', 'Telugu', 'Tagalog', 'Thai', 'Turkish', 'Ukrainian',
-        'Vietnamese'
-    ]
-
-    # Erstelle einen DataFrame
-    df_languages = pd.DataFrame(list(zip(languages, language_names)), columns=['Language Code', 'Language Name'])
-
-    # Beispiel png
-    # img = cv2.imread("BibliographieBsp4.png")
+    # Inhalt der Zwwischenablage als Bild importieren
     img = ImageGrab.grabclipboard()
 
     # language wird benötigt, um Sonderzeichen aus verschiedenen europäischen Sprachen gut zu erkennen
-    # Im Frontend muss ein Button integriert werden, über den die Sprachauswahl möglich ist (z.B. die Sprache, die sich auf die meisten Namen bezieht)
-    # Wahl der Sprache
-    # Sprache = ...
     language = df_languages.loc[df_languages['Language Name'] == selected_language, 'Language Code'].values[0]
-    converted_text = pytesseract.image_to_string(img, lang=language)
 
-    if converted_text == "":
+    # Prüfen, ob sich ein Screenshot in der Zwischenablage befindet
+    try:
+        converted_text = pytesseract.image_to_string(img, lang=language)
+        if converted_text == "":
+            converted_text = "No text in screenshot recognized"
+    except:
         converted_text = "No valid image in clipboard"
 
     # Mögliche Spliteinstellungen
@@ -146,7 +110,7 @@ def newocr(selected_language):
 
     # Wahl der Aufzählungsmethode, CS: es wird standardmäßig ohne Aufzählung gesplittet und nachträglich die Aufzählungen entfernt
     Methode = df_split["Bibliographie_style"][2]
-    print(Methode)
+
     if Methode == 'Aufzählung durch Ordinalzahlen':
         # Splitte den String nach der Zeichenkombination "\n\n. "
         split_text = converted_text.split("\n\n. ")
@@ -186,16 +150,3 @@ def newocr(selected_language):
     return multi_outstring
 
 
-def remove_enumeration(text):
-    lines = text.split('\n')
-    result = []
-    for line in lines:
-        # Entferne führende Zahlen mit Punkt oder eckigen Klammern und Leerzeichen
-        cleaned_line = re.sub(r'^\s*\d+\.\s*|\[\d+\]\s*', '', line)
-
-        # Entferne auch Leerzeichen am Anfang und Ende der Zeile
-        cleaned_line = cleaned_line.strip()
-
-        result.append(cleaned_line)
-    result = list(filter(None, result))
-    return '\n\n'.join(result)

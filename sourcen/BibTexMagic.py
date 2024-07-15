@@ -7,20 +7,17 @@ import string
 import spacy
 
 
-
 def create_bibtex_loop(multi_refstrings):
-
+    # Schleife für mehrfaches Aufrufen des Parsers
     split_refstrings = multi_refstrings.split('\r\n')
     split_refstrings = list(filter(None, split_refstrings))
-    
+
     multi_outstring = ""
 
     for element in split_refstrings:
-    
-       multi_outstring = multi_outstring + create_bibtex(element) + "\n\n"
+        multi_outstring = multi_outstring + create_bibtex(element) + "\n\n"
 
     return multi_outstring
-
 
 def custom_strip(text, replaceCharacter=[]):
     allowed_chars = string.punctuation + string.whitespace + "“" + "”"
