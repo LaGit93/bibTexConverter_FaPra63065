@@ -3,7 +3,6 @@ import pytesseract
 import re
 import pandas as pd
 
-
 def language_codes():
     # Liste mit den 30 häufigsten Sprachen in deutscher Abkürzung
     language_codes_de = [
@@ -14,9 +13,7 @@ def language_codes():
         'msa', 'nld', 'nor', 'pol', 'por', 'ron', 'rus', 'slk', 'slv', 'spa',
         'sqi', 'srp', 'swe', 'tam', 'tel', 'tgl', 'tha', 'tur', 'ukr', 'vie'
     ]
-
     return language_codes_de
-
 
 def language_names():
     # Deutsche Namen der Sprachen
