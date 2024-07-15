@@ -5,14 +5,14 @@ import ocr_clipboard as occ
 
 app = Flask(__name__)
 
-# Initilisieren der Startseite
+# Initialisieren der Startseite
 @app.route('/')
 def index():
     language_list = occ.language_names()
     return render_template("result.html", language_list=language_list)
 
 
-# Ausführen des BiibTex-Parsers
+# Ausführen des BibTex-Parsers
 @app.route('/BibTexConverter', methods=['POST'])
 def modify():
     if request.method == 'POST':
