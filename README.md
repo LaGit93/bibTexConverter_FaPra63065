@@ -1,4 +1,29 @@
+# BibTex-Konverter
+
+## Kurzfassung
+Der BibTex-Konverter wurde im Rahmen des Projektpraktikums Sprachtechnologie an der Fernuniversität in Hagen 
+entwickelt. Mit ihm ist es möglich, die Referenz einer Veröffentlichung von einem 
+einfachen String in das BibTex-Format zu konvertieren. Weiter Informationen
+befinden sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter) dieses Projektes
+
 ## Installationsanleitung 
+
+### 1. Clonen des Repositories
+
+### 2. Installation von miniconda
+
+### 3. Einrichten einer virtuellen Entwicklungsumgebung
+
+### 4 (optional) Löschen von virtuellen Entwicklungsumgebungen in miniconda
+
+
+## Bedienungsanleitung
+
+### 1. Referenzen als Input
+
+### 2. Konvertieren in BibTex
+
+### 3. Speichern der konvertierten Referenzen
 
 (inklusive Vorbedingungen, externe Abhängigkeiten)
 
