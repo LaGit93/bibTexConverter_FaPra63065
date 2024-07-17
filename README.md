@@ -14,7 +14,7 @@ dem Sie Schreibrechte besitzen. Alternativ können Sie das Repository über Git 
 oder über ihre IDE einbinden.
 
 Sollten Sie die Testdaten, Trainingsdaten und die Dokumentation nicht benötigen, ist es ausreichend, 
-folgende Dateien und Ordner in Ihrem Projektverzeichnis zu speichern:
+folgende Dateien und Ordner aus dem Verzeichnis ```sourcen``` in Ihrem Projektverzeichnis zu speichern:
 1. main.py
 2. ocr_clipboard.py
 3. BibTexMagic.py
