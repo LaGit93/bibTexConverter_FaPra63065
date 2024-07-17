@@ -5,7 +5,7 @@ from transformers import pipeline
 import re
 import string
 import spacy
-
+import requests
 
 def create_bibtex_loop(multi_refstrings):
     # Schleife für mehrfaches Aufrufen des Parsers
