@@ -74,8 +74,8 @@ im Ordner miniconda den Ordner ```bibTexConverter``` manuell löschen.
 
 ### 3. Speichern der konvertierten Referenzen
 
-
-
+Hier mal eine interaktive Darstellung
+<iframe src="pfad_zur_html_datei" width="600" height="400"></iframe>
 
 ## Nachher löschen
 (inklusive Vorbedingungen, externe Abhängigkeiten)
