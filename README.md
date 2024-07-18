@@ -33,9 +33,11 @@ Sollten Sie die Testdaten, Trainingsdaten und die Dokumentation nicht benötigen
 folgende Dateien und Ordner aus dem Verzeichnis ```sourcen``` in Ihrem Projektverzeichnis zu speichern:
 1. main.py
 2. ocr_clipboard.py
-3. BibTexMagic.py
+3. BibTexMagic.py [Hier herunterladen](https://raw.githubusercontent.com/LaGit93/bibTexConverter_FaPra63065/main/sourcen/BibTexMagic.py)
 4. conda.yaml
 5. templates
+
+https://github.com/LaGit93/bibTexConverter_FaPra63065/raw/main/sourcen/BibTexMagic.py?raw=true
 
 Für den Fall, dass Sie bereits alle Pakete lokal installiert haben, die in der
 Datei [conda.yaml](https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/sourcen/conda.yaml)
