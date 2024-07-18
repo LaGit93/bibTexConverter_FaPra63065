@@ -9,9 +9,25 @@ befinden sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wi
 ## Installationsanleitung 
 
 ### 1. Clonen des Repositories
-Laden Sie das Git-Repository herunter und speichern Sie es in einem Ordner, auf
-dem Sie Schreibrechte besitzen. Alternativ können Sie das Repository über Git clonen 
-oder über ihre IDE einbinden.
+Es gibt verschiedene Möglichkeiten, den BibTex-Konverter auf Ihrem System zu installieren. 
+Wählen Sie eine Möglichkeit aus den folgenden aus:
+
+#### a. Clonen über die Kommandozeile
+Öffnen Sie ein Terminal und wechseln Sie in das Verzeichnis, in das Sie das Repository
+clonen möchten. Führen Sie anschließend folgenden Befehl für das Clonen aus:
+
+```
+git clone https://github.com/LaGit93/bibTexConverter_FaPra63065
+```
+
+#### b. Download als .zip-Datei
+Laden sie den BibTex-Konverter über folgenden Link auf ihr System:
+
+https://github.com/LaGit93/bibTexConverter_FaPra63065/archive/refs/heads/main.zip
+
+Entpacken Sie anschließend die .zip-Datei.
+
+#### c. selektiver Download
 
 Sollten Sie die Testdaten, Trainingsdaten und die Dokumentation nicht benötigen, ist es ausreichend, 
 folgende Dateien und Ordner aus dem Verzeichnis ```sourcen``` in Ihrem Projektverzeichnis zu speichern:
@@ -21,8 +37,17 @@ folgende Dateien und Ordner aus dem Verzeichnis ```sourcen``` in Ihrem Projektve
 4. conda.yaml
 5. templates
 
+Für den Fall, dass Sie bereits alle Pakete lokal installiert haben, die in der
+Datei [conda.yaml](https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/sourcen/conda.yaml)
+aufgelistet sind, können Sie den Installationsvorgang hier abbrechen. Wenn Sie die 
+Nutzung von virtuellen Umgebungen nutzen bevorzugen, fahren Sie bitte mit den 
+Schritten 2 und 3 fort.
+
+
 ### 2. Installation von miniconda
-Die für die unterschiedlichen Aufgaben verwendeten Python-Bibliotheken sind in der Datei conda.yaml zusammengestellt. 
+
+Die für die unterschiedlichen Aufgaben verwendeten Python-Bibliotheken sind in der Datei 
+[conda.yaml](https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/sourcen/conda.yaml) zusammengestellt. 
 Zum reproduzierbaren Aufbau einer Umgebung mit allen benötigten Bibliotheken wird
 [miniconda](https://docs.anaconda.com/miniconda/) verwendet. 
 
@@ -65,6 +90,8 @@ conda env list
 
 Sollte die virtuelle Umgebung nicht entfernt worden sein, können Sie auf Ihrem System
 im Ordner miniconda den Ordner ```bibTexConverter``` manuell löschen.
+
+---
 
 ## Bedienungsanleitung
 
