@@ -21,11 +21,8 @@ git clone https://github.com/LaGit93/bibTexConverter_FaPra63065
 ```
 
 #### b. Download als .zip-Datei
-Laden sie den BibTex-Konverter über folgenden Link auf ihr System:
-
-https://github.com/LaGit93/bibTexConverter_FaPra63065/archive/refs/heads/main.zip
-
-Entpacken Sie anschließend die .zip-Datei.
+Laden sie den BibTex-Konverter als [.zip-Datei](https://github.com/LaGit93/bibTexConverter_FaPra63065/archive/refs/heads/main.zip)  
+auf ihr System und entpacken Sie die Datei.
 
 #### c. selektiver Download
 
