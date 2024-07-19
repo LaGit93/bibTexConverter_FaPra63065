@@ -21,8 +21,7 @@ git clone https://github.com/LaGit93/bibTexConverter_FaPra63065
 ```
 
 #### b. Download als .zip-Datei
-Laden sie den BibTex-Konverter als [.zip-Datei](https://github.com/LaGit93/bibTexConverter_FaPra63065/archive/refs/heads/main.zip)  
-auf ihr System und entpacken Sie die Datei.
+Laden sie den BibTex-Konverter als [.zip-Datei](https://github.com/LaGit93/bibTexConverter_FaPra63065/archive/refs/heads/main.zip) auf ihr System und entpacken Sie die Datei.
 
 #### c. selektiver Download
 
@@ -30,13 +29,12 @@ Sollten Sie die Testdaten, Trainingsdaten und die Dokumentation nicht benötigen
 folgende Dateien und Ordner aus dem Verzeichnis ```sourcen``` in Ihrem Projektverzeichnis zu speichern:
 1. main.py
 2. ocr_clipboard.py
-3. BibTexMagic.py [Hier herunterladen](https://raw.githubusercontent.com/LaGit93/bibTexConverter_FaPra63065/main/sourcen/BibTexMagic.py)
+3. BibTexMagic.py 
 4. conda.yaml
 5. templates
 
-https://github.com/LaGit93/bibTexConverter_FaPra63065/raw/main/sourcen/BibTexMagic.py?raw=true
 
-Für den Fall, dass Sie bereits alle Pakete lokal installiert haben, die in der
+Für den Fall, dass Sie bereits alle erforderlichen Pakete lokal installiert haben, die in der
 Datei [conda.yaml](https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/sourcen/conda.yaml)
 aufgelistet sind, können Sie den Installationsvorgang hier abbrechen. Wenn Sie die 
 Nutzung von virtuellen Umgebungen nutzen bevorzugen, fahren Sie bitte mit den 
