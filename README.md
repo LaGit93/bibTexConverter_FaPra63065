@@ -92,6 +92,19 @@ im Ordner miniconda den Ordner ```bibTexConverter``` manuell löschen.
 
 ## Bedienungsanleitung
 
+!!!
+Noch bearbeiten
+!!!
+
+Die Benuntzeroberfläche des BibTex-Konverters ist in drei Bereiche geteilt:
+
+1. Im oberen Fenster werden Referenzen in Textform über die Zwischenablage eingefügt. Darüberhinaus ist es möglich, Referenzen über einen Screenshot aus der Zwischenablage einzufügen. Um Sonderzeichen besser erkennen zu können, kann über das Dropdown-Menü eine Sprache ausgewählt, in der die zu erkennenden Sonderzeichen vorkommen (default ist Englisch). Durch den Button 'OCR Read' wird der Inhalt der Zwischenablage als Text im oberen Fenster dargestellt. Die Texterkennung ist weitestgehend zuverlässig, offensichtliche Fehler können nach dem Import noch händisch korrigiert werden. Werden mehrere Referenzen eingefügt, ist darauf zu achten, dass immer eine Leerzeile als Trennung vorhanden sein muss. Eventuelle Aufzählungszeichen, die nicht automatisch entfernt worden sind, müssen händisch gelöscht werden. 
+2. Der Button 'Convert' konvertiert den Inhalt des oberen Fensters in BC. Dabei werden automatisch der passenste Referrenztyp gewählt und die einzelnen Attribute ausgelesen. Aus dem Nachnamen des ersten Autors und dem Jahr der Veröffentlichung wird ein der BibTex-key erzeugt. Das Ergebnis der Konvertierung wird im unteren Fenster dargestellt. Sollten einige Felder nicht korrekt erkannt worden sein, ist es hier möglich, händische Änderungen durchzuführen. 
+3. Über den Button 'Download txt-file' wird der Inhalt des zweiten Textfeldes in eine txt-Datei geschrieben und in den Standard-Dowload-Ordner des Webbrowser heruntergeladen. Der default Dateiname ist 'BibTexConvert.txt' und kann über das Eingabefeld geändert werden (ohne Dateiendung). 
+
+Die Textdatei kann anschließend in ein Literaturverwaltungsprogramm ([Citavi](https://www.citavi.com/de), [Zotero](https://www.zotero.org/), [Jabref](https://www.jabref.org/), [Endnote](https://endnote.com/de/), etc. ) eingebunden werden. Alternativ kann der Inhalt der txt-Datei direkt in die bib-Datei eines Latex-Dokuments übertragen werden.
+
+
 ### 1. Referenzen als Input
 
 ### 2. Konvertieren in BibTex
