@@ -70,7 +70,7 @@ conda env create -f conda.yaml -n bibTexConverter
 Das Erzeugen der virtuellen Umgebung wird einmalig durchgeführt und kann etwas Zeit in 
 Anspruch nehmen (ca. 2,6 GB).
 
-### 4 (optional) Löschen von virtuellen Entwicklungsumgebungen in miniconda
+### 4. (optional) Löschen von virtuellen Entwicklungsumgebungen in miniconda
 Wenn Sie den BibTex-Konverter nicht mehr verwenden möchten, können Sie die virtuelle
 Umgebung wieder löschen. Öffnen Sie hierfür wieder eine Shell (für Windows die Conda-Shell)
 und führen Sie folgende Befehle aus, um die virtuelle Umgebung *bibTexConverter* zu löschen:
