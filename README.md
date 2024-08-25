@@ -98,7 +98,9 @@ An dieser Stelle soll die Funktionsweise des BibTex-Konverters komprimiert darge
 Eine detaillierte Beschreibung der Benutzeroberfläche befindet sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter/#Benutzeroberfl%C3%A4che)
 dieses Repositories. 
 
-![WebApp.jpeg](Dokumente%2FWebApp.jpeg)
+<p align="center">
+<img src="https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/Dokumente/WebApp.jpeg" width="500"/>
+</p>
 
 Die Nutzung des Tools erfolgt in drei Schritten:
 
@@ -112,6 +114,6 @@ Der BibTex-Konverter kann mehrere Referenzen als Batch-Konvertierung durchführe
 Im unteren Textfeld wird der BibTex-Code erzeugt. Passen Sie den Code ggf. händisch an.
 
 ### 3. Speichern der konvertierten Referenzen
-Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button ```**Download txt-file**``` klicken.
+Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button ```Download txt-file``` klicken.
 Sie können vorher noch einen Dateinamen vergeben (default ist *BibTexConverter*)
 
