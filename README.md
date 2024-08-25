@@ -104,14 +104,14 @@ Die Nutzung des Tools erfolgt in drei Schritten:
 
 ### 1. Referenzen als Input:
 Fügen Sie die Referenz als Text (Referenzstring) in das obere Textfeld ein. Liegt die 
-Referenz hingegen als Bild o.ä. vor, erstellen Sie ein Screenshot der Referenz und klicken Sie auf den Button *OCR Read*. 
+Referenz hingegen als Bild o.ä. vor, erstellen Sie ein Screenshot der Referenz und klicken Sie auf den Button ```OCR Read```. 
 Stellen Sie für das Erkennen sprachspezifischer Sonderzeichen die korrekte Sprache ein (default ist englisch).
 Der BibTex-Konverter kann mehrere Referenzen als Batch-Konvertierung durchführen. Trennen Sie die Referenzen jeweils mit einer Leerzeile.
 ### 2. Konvertieren in BibTex
-Überprüfen Sie die den Referenzstring auf offensichtliche Fehler (Sonderzeichen, fehlerhafte Namen etc.) , die durch das Kopieren oder durch die OCR entstanden sind und klicken Sie auf den Button *Convert*.
+Überprüfen Sie die den Referenzstring auf offensichtliche Fehler (Sonderzeichen, fehlerhafte Namen etc.) , die durch das Kopieren oder durch die OCR entstanden sind und klicken Sie auf den Button ```Convert```.
 Im unteren Textfeld wird der BibTex-Code erzeugt. Passen Sie den Code ggf. händisch an.
 
 ### 3. Speichern der konvertierten Referenzen
-Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button *Download txt-file* klicken.
+Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button ```**Download txt-file**``` klicken.
 Sie können vorher noch einen Dateinamen vergeben (default ist *BibTexConverter*)
 
