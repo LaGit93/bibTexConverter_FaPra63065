@@ -3,8 +3,10 @@
 ## Kurzfassung
 Der BibTex-Konverter wurde im Rahmen des Projektpraktikums Sprachtechnologie an der Fernuniversität in Hagen 
 entwickelt. Mit ihm ist es möglich, die Referenz einer Veröffentlichung von einem 
-einfachen String in das BibTex-Format zu konvertieren. Weiter Informationen
-befinden sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter) dieses Projektes
+einfachen String in das BibTex-Format zu konvertieren:
+![Intro.png](Dokumente%2FIntro.png)
+Weiter Informationen
+befinden sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter) dieses Projektes.
 
 ## Installationsanleitung 
 
@@ -90,25 +92,24 @@ im Ordner miniconda den Ordner ```bibTexConverter``` manuell löschen.
 
 ---
 
-## Bedienungsanleitung
+## Workflow
 
-!!!
-Noch bearbeiten
-!!!
+An dieser Stelle soll die Funktionsweise des BibTex-Konverters komprimiert dargestellt werden.
+Eine detaillierte Beschreibung der Benutzeroberfläche befindet sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter/#Benutzeroberfl%C3%A4che)
+dieses Repositories. 
+![WebApp.jpeg](Dokumente%2FWebApp.jpeg)
+Die Nutzung des Tools erfolgt in drei Schritten:
 
-Die Benuntzeroberfläche des BibTex-Konverters ist in drei Bereiche geteilt:
-
-1. Im oberen Fenster werden Referenzen in Textform über die Zwischenablage eingefügt. Darüberhinaus ist es möglich, Referenzen über einen Screenshot aus der Zwischenablage einzufügen. Um Sonderzeichen besser erkennen zu können, kann über das Dropdown-Menü eine Sprache ausgewählt, in der die zu erkennenden Sonderzeichen vorkommen (default ist Englisch). Durch den Button 'OCR Read' wird der Inhalt der Zwischenablage als Text im oberen Fenster dargestellt. Die Texterkennung ist weitestgehend zuverlässig, offensichtliche Fehler können nach dem Import noch händisch korrigiert werden. Werden mehrere Referenzen eingefügt, ist darauf zu achten, dass immer eine Leerzeile als Trennung vorhanden sein muss. Eventuelle Aufzählungszeichen, die nicht automatisch entfernt worden sind, müssen händisch gelöscht werden. 
-2. Der Button 'Convert' konvertiert den Inhalt des oberen Fensters in BC. Dabei werden automatisch der passenste Referrenztyp gewählt und die einzelnen Attribute ausgelesen. Aus dem Nachnamen des ersten Autors und dem Jahr der Veröffentlichung wird ein der BibTex-key erzeugt. Das Ergebnis der Konvertierung wird im unteren Fenster dargestellt. Sollten einige Felder nicht korrekt erkannt worden sein, ist es hier möglich, händische Änderungen durchzuführen. 
-3. Über den Button 'Download txt-file' wird der Inhalt des zweiten Textfeldes in eine txt-Datei geschrieben und in den Standard-Dowload-Ordner des Webbrowser heruntergeladen. Der default Dateiname ist 'BibTexConvert.txt' und kann über das Eingabefeld geändert werden (ohne Dateiendung). 
-
-Die Textdatei kann anschließend in ein Literaturverwaltungsprogramm ([Citavi](https://www.citavi.com/de), [Zotero](https://www.zotero.org/), [Jabref](https://www.jabref.org/), [Endnote](https://endnote.com/de/), etc. ) eingebunden werden. Alternativ kann der Inhalt der txt-Datei direkt in die bib-Datei eines Latex-Dokuments übertragen werden.
-
-
-### 1. Referenzen als Input
-
+### 1. Referenzen als Input:
+Fügen Sie die Referenz als Text (Referenzstring) in das obere Textfeld ein. Liegt die 
+Referenz hingegen als Bild o.ä. vor, erstellen Sie ein Screenshot der Referenz und klicken Sie auf den Button *OCR Read*. 
+Stellen Sie für das Erkennen sprachspezifischer Sonderzeichen die korrekte Sprache ein (default ist englisch).
+Der BibTex-Konverter kann mehrere Referenzen als Batch-Konvertierung durchführen. Trennen Sie die Referenzen jeweils mit einer Leerzeile.
 ### 2. Konvertieren in BibTex
+Überprüfen Sie die den Referenzstring auf offensichtliche Fehler (Sonderzeichen, fehlerhafte Namen etc.) , die durch das Kopieren oder durch die OCR entstanden sind und klicken Sie auf den Button *Convert*.
+Im unteren Textfeld wird der BibTex-Code erzeugt. Passen Sie den Code ggf. händisch an.
 
 ### 3. Speichern der konvertierten Referenzen
-
+Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button *Download txt-file* klicken.
+Sie können vorher noch einen Dateinamen vergeben (default ist *BibTexConverter*)
 
