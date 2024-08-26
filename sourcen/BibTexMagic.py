@@ -1,6 +1,5 @@
 import torch
 import pandas as pd
-torch.cuda.is_available()
 from transformers import pipeline
 import re
 import string
@@ -8,6 +7,15 @@ import spacy
 import requests
 
 def create_bibtex_loop(multi_refstrings):
+
+    '''
+    Schleife, die create_bibtex mehrfach aufruft, sollten sich mehrere Referenzen in der Eingabe befinden
+    
+    Parameter:
+    multi_refstrings: String, in dem sich eine oder mehrere Referenzen befinden.
+    
+    return: String mit BibTex Code für jede einzelne Referenz. 
+    '''
     # Schleife für mehrfaches Aufrufen des Parsers
     split_refstrings = multi_refstrings.split('\r\n')
     split_refstrings = list(filter(None, split_refstrings))
@@ -19,25 +27,48 @@ def create_bibtex_loop(multi_refstrings):
 
     return multi_outstring
 
-def custom_strip(text, replaceCharacter=[]):
+def custom_strip(text, replaceCharacter = []):
+    
+    '''
+    Strip-Funktion, die standardmäßig neben Whitespace auch Zeichen aus string.punctuation und die 
+    Zeichen “ und ” entfernt.
+    
+    Parameter:
+    text: Text, der gestripped werden soll.
+    replaceCharacter = []: Liste von Zeichen, die für den Strip nicht berücksichtigt werden sollen.
+    
+    return: gestrippter Text.
+    '''
+    
     allowed_chars = string.punctuation + string.whitespace + "“" + "”"
     for character in replaceCharacter:
         allowed_chars = allowed_chars.replace(character, '')
     return text.strip(allowed_chars)
 
 
-def getIndexOfSubstring(text, regEx=[], reverse=False):
-    # if reverse = False then it finds the first occurance of a given regEx.
-    # if reverse = True, then it finds the last occurance of a given regEx.
-    # beceause the occurance with the max length is taken, it always chooses the regex that covers the most letters
+def getIndexOfSubstring(text, regEx = [], reverse = False):
+    
+    '''
+    Prüft für eine Liste von RegEx, ob sie im String namens text vorkommen. Der RegEx, der den Substring mit der grötßen
+    Länge ermittelt, kommt zum Zuge. Für ein RegEx wird nur der erste Match berücksichtigt. 
+    
+    Parameter:
+    text: Text, wo das Auftreten des RegEx geprüft wird.
+    regEx = []: Liste mit RegEx. 
+    reverse: Ob das erste oder letzte Auftreten eines Matches geprüft maßgeblich ist. Wenn reverse = False, dann wird das
+    erste Auftreten geprüft.
+    
+    return: Substring und den zugehörigen Start- und Endindex.
+    '''
+    
     length = 0
     matches = []
     substring = ""
-    # print(f'regEx: {regEx}')
-    # print(f'text: {text}')
+    #print(f'regEx: {regEx}')
+    #print(f'text: {text}')
     for regExElement in regEx:
         matches = list(re.finditer(regExElement, text))
-        # print(f'matches: {matches}')
+        #print(f'matches: {matches}')
         if matches:
             if reverse:
                 match = matches[-1]
@@ -50,38 +81,121 @@ def getIndexOfSubstring(text, regEx=[], reverse=False):
                 endIndex = match.end()
                 substring = text[match.start():match.end()]
     if substring != "":
-        return startIndex, endIndex, substring
+        return startIndex, endIndex, substring   
     return -1, -1, substring
 
+def replaceSubstring (startIndex, endIndex, text, substituteString, ignorePunctuation = ["&", "(", ")"]):
+    
+    '''
+    Ersetzt in dem String namens text einen Substring durch einen anderen String namens substituteString.
+    Die Variablen startIndex und endIndex können dabei noch verändert werden, von vor der Postion startIndex oder nach der
+    Position endIndex bestimmte Zeichen folgen, die mit entfernt werden sollen. Die Existenz dieser bestimmten Zeichen 
+    wird mit der Funktion isSpeceficPunctuation geprüft. Mit dem Parameter ignorePunctuation wird auf die Prüfung
+    bestimmter Zeichen verzichtet.
+    
+    Parameter:
+    startIndex: Index, wo der zu ersetztende Substring im String namens text eingefügt werden soll.
+    endIndex: Index, wo der zu ersetztende Substring im String text enden soll.
+    text: Text, wo das Auftreten des Substrings geprüft wird.
+    substituteString: Der einzufügende Substring.
+    ignorePunctuation: Zeichen, die für die Indexverschiebung nicht berücksichtigt werden sollen.
+    
+    return: Substring und den zugehörigen Start- und Endindex.
+    '''
+    
+    if endIndex > 0:
+        startIndexReplace = 0
+        endIndexReplace = 0
+        if startIndex > 0:
+            for i in range(startIndex, -1, -1):
+                if isSpeceficPunctuation(text[i], ignorePunctuation):
+                    startIndexReplace = i + 1
+                    break
+        else:
+            startIndexReplace = 0            
+        if endIndex < len(text):
+            for i in range(endIndex-1, len(text), 1):
+                if isSpeceficPunctuation(text[i], ignorePunctuation):
+                    endIndexReplace = i + 1
+                    break
+                elif i == len(text)-1:
+                    endIndexReplace = len(text)
+        else:
+            endIndexReplace = len(text)
+        if endIndexReplace > 0:
+            changedText = text[0:startIndexReplace] + substituteString + text[endIndexReplace:len(text)]
+            return changedText, text[startIndexReplace:endIndexReplace]
+    return text, ""
 
 def is_SurenameFirst(names):
+    
+    '''
+    Prüft, ob die Autoren- oder Editornamen mit dem Vornamen beginnen. 
+    
+    Parameter:
+    names: Substring vom Literaturstring, der die Autoren- oder Editornamen enthält.
+    
+    return: True, wenn die Namen mit dem Vornamen beginnen. Ansonsten False.
+    '''
+    
     splitedNames = names.split(" ")
-    # print(f'is_SurenameFirst: {splitedNames}')
-    # regex wie w+ erkennt bspw. KEIN è
+    #regex wie w+ erkennt bspw. KEIN è 
     if splitedNames[0].endswith("."):
         return True
     splitedNames = names.split(",")
     if all(" " in item.strip() for item in splitedNames):
         return True
     return False
-
-
+    
 def is_NameShortened(df_PER):
+    
+    '''
+    Prüft, ob die Namen mit einem Punkt abgekürzt sind.
+    
+    Parameter:
+    df_Per: Dataframe der durch Named Entity Recognition erkannten dictionaries vom Typ Person.
+    
+    return: True, falls der Name mit einem Punkt abgekürzt ist. Ansonsten False.
+    '''
+    
     for index in df_PER.index.values.tolist():
-        if "." == text[df_PER["end"].iloc[index]] and len(
-                text[df_PER["start"].iloc[index]:df_PER["end"].iloc[index] + 1]) == 2:
+        if "." == text[df_PER["end"].iloc[index]] and len(text[df_PER["start"].iloc[index]:df_PER["end"].iloc[index] + 1]) == 2:
             return True
     return False
 
 
-def isSpeceficPunctuation(text, replaceCharacter=[]):
+def isSpeceficPunctuation(text, replaceCharacter = []):
+    
+    '''
+    Prüft, ob ein Sring nur aus bestimmten Satzzeichen besteht. Standardmäßig wird string.punctuation + string.whitespace
+    geprüft.
+    
+    Parameter:
+    text: Text, der geprüft werden soll.
+    replaceCharacter = []: Liste von Zeichen, die aus der standardmäßigen Prüfung entfernt werden sollen.
+    '''
+        
     allowed_chars = string.punctuation + string.whitespace
     for character in replaceCharacter:
         allowed_chars = allowed_chars.replace(character, '')
     return all(char in allowed_chars for char in text)
 
-
-def is_Editor(editorRegEx, textBetweenNames, startIndexTextBetweenNames, markerBehind=True):
+def is_Editor(editorRegEx, textBetweenNames, startIndexTextBetweenNames, markerBehind = True):
+    
+    '''
+    Prüft, ob es sich bei einem String um ein Signalwort für Editoren handelt.
+    
+    Parameter:
+    editorRegEx: RegEx, die Signalwörter für das Auftreten von Editoren erkennen sollen.
+    textBetweenNames: Substring vom Literaturstring, der geprüft weden soll, ob das Signalwort enthalten ist. Dieser 
+    Substring steht stehts zwischen potententiellen Namen.
+    startIndexTextBetweenNames: Startindex, wo Substring im original Literaturstring steht. Signalwörter können dabei nicht
+    Bestandteil von Namen sein, sondern immer nur dazwischen. Daher der Name des Parameters.
+    markerBehind: Ob das Signalwort für Editoren vor oder hinter den Editorennamen im original Literaturstring steht.
+    
+    return: Boolean, ob gefunden, und Start- und Endindizies, wo es im original Literaturstring vorkommt.
+    '''
+    
     startSubstring, endSubstring, substring = getIndexOfSubstring(textBetweenNames, [editorRegEx])
     if startIndexTextBetweenNames > -1 and markerBehind:
         if isSpeceficPunctuation(textBetweenNames[startIndexTextBetweenNames:startSubstring], ["&"]):
@@ -91,54 +205,70 @@ def is_Editor(editorRegEx, textBetweenNames, startIndexTextBetweenNames, markerB
             return True, startSubstring + startIndexTextBetweenNames, endSubstring + startIndexTextBetweenNames
     return False, -1, -1
 
-
 def processNames(authors):
+    
+    '''
+    Bereitet die Autorennamen in ein Standardformat auf.
+    
+    Parameter:
+    authors: Substring aus dem original Literaturstring, der die Autoren enthält.
+    
+    return: Standardformat für Autoren.
+    '''
+    
     finalAuthors = ""
     search_terms = [" and ", ", and ", " & ", ", & "]
     surenameFirst = is_SurenameFirst(authors.strip())
     authors = custom_strip(authors)
-    # print(f"processNames: {authors}")
     if surenameFirst:
         startIndex, endIndex, andInAuthors = getIndexOfSubstring(authors, search_terms)
-        # print("Fall surenameFirst".format(authors))
-        # hier völlig egal, ob er einzelne Initialen in ein eigenes Word gesteckt hat, obwohl es noch Nachnamen gib
         if startIndex >= 0:
             authors = authors.replace(andInAuthors, " and ")
-            # print(f'authors: {authors}')
             finalAuthors = authors.replace(", ", " and ")
         else:
             finalAuthors = authors
     elif "., " in authors:
-        # print("Fall ., {0}".format(authors))
         search_terms = ["., and ", "., & ", ". and ", ". & "]
         andInAuthors = getIndexOfSubstring(authors, search_terms)[2]
         authors = authors.replace("., ", "#., ")
         if andInAuthors != "":
             authors = authors.replace(andInAuthors, "#., ")
         authors = authors.split("., ")
-        authors = [name.replace("#", ".") for name in authors]
-        authors = [name.replace("..", ".") for name in authors]
+        authors = [name.replace("#",".") for name in authors]
+        authors = [name.replace("..",".") for name in authors]
         for author in authors[:-1]:
             buffer = author.split(", ")
             finalAuthors = finalAuthors + buffer[1] + " " + buffer[0] + " and "
         buffer = authors[-1].split(", ")
-        finalAuthors = finalAuthors + buffer[1] + " " + buffer[0]
+        finalAuthors = finalAuthors + buffer[1] + " " +  buffer[0]
     elif ", " in authors:
-        # print("Fall , {0}".format(authors))
         search_terms = [", and ", ", & ", " and ", " & "]
         andInAuthors = getIndexOfSubstring(authors, search_terms)[2]
-        if andInAuthors != "":
+        if andInAuthors != "":  
             authors = authors.replace(andInAuthors, ", ")
         authors = authors.split(", ")
         for i in range(0, len(authors) - 3, 2):
-            finalAuthors = finalAuthors + authors[i + 1] + " " + authors[i] + " and "
+            finalAuthors = finalAuthors + authors[i+1] + " " + authors[i] + " and "
         finalAuthors = finalAuthors + authors[len(authors) - 1] + " " + authors[len(authors) - 2]
     return custom_strip(finalAuthors)
 
-
 def getAuthors(text):
+    
+    '''
+    Schneidet die Autoren aus dem original Literaturstring aus. Es können mehrere Autoren vorliegen und diese
+    können mit einem "and" oder "&" verknüpft sein. Die Funktion soll alle Autoren einschließlich dem "and" und "&"
+    in einem Block extrahieren. Dieser Block ist sinnbildlich eine Kette von Namen.
+    Wenn eine solche Kette von Namen gefunden wird, wird setChainStart = True gesetzt und geprüft, 
+    ob es sich auch um Autoren handelt.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Autoren und die Autoren.
+    '''
+    
     search_terms = [" and ", ", and ", " & ", ", & ", "., & ", "., and ", ". and ", ". & "]
-
+    
     onlyPunctuation = False
     onlyAnd = False
     authorsDetected = False
@@ -147,13 +277,12 @@ def getAuthors(text):
     endIndexAuthors = -1
     chainStartIndex = -1
     changedText = ""
-
+    
     df_PER = getPersonTags(text)
     index_df_PER_List = df_PER.index.values.tolist()
-
+    
     if not df_PER.empty and df_PER["start"].iloc[0] == 0:
         for index in index_df_PER_List:
-            # beachte: Hiermit lese ich immer schon vor!
             if index < len(index_df_PER_List) - 1:
                 textBetweenNames = text[df_PER["end"].iloc[index]:df_PER["start"].iloc[index + 1]]
             else:
@@ -161,7 +290,7 @@ def getAuthors(text):
             onlyPunctuation = isSpeceficPunctuation(textBetweenNames, ["&"])
             firstStartIndex, firstEndIndex, andTyp = getIndexOfSubstring(textBetweenNames, search_terms)
             onlyAnd = textBetweenNames == andTyp
-            if setChainStart:
+            if setChainStart: 
                 chainStartIndex = df_PER["start"].iloc[index]
                 setChainStart = False
             if not onlyPunctuation and not onlyAnd:
@@ -175,8 +304,21 @@ def getAuthors(text):
             return changedText, author
     return text, ""
 
-
 def getEditors(text):
+    
+    '''
+    Schneidet die Editoren aus dem original Literaturstring aus. Es können mehrere Editoren vorliegen und diese
+    können mit einem "and" oder "&" verknüpft sein. Die Funktion soll alle Editoren einschließlich dem "and" und "&"
+    in einem Block extrahieren. Dieser Block ist sinnbildlich eine Kette von Namen.
+    Wenn eine solche Kette von Namen gefunden wird, wird setChainStart = True gesetzt und geprüft, 
+    ob es sich auch um Editoren handelt.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Editoren und die ausgeschnittenen Editoren.
+    '''
+    
     search_terms = [" and ", ", and ", " & ", ", & ", "., & ", "., and ", ". and ", ". & "]
     editorRegEx = "\s*(\()?(Eds\.|Eds|Ed|ed|Ed\.|ed\.|eds\.|editor|editors)(\))?\s*"
     onlyPunctuation = False
@@ -188,7 +330,7 @@ def getEditors(text):
     chainStartIndex = -1
     startIndexEditorMarker = -1
     endIndexEditorMarker = -1
-
+    
     df_PER = getPersonTags(text)
     index_df_PER_List = df_PER.index.values.tolist()
     if not df_PER.empty:
@@ -200,28 +342,22 @@ def getEditors(text):
             onlyPunctuation = isSpeceficPunctuation(textBetweenNames, ["&"])
             firstStartIndex, firstEndIndex, andTyp = getIndexOfSubstring(textBetweenNames, search_terms)
             onlyAnd = textBetweenNames == andTyp
-            # if true, that a new chain of Authors begins. An Author Chain is for example "Name1, Name2 and Name3"
-            if setChainStart:
+            #if true, that a new chain of Authors begins. An Author Chain is for example "Name1, Name2 and Name3"
+            if setChainStart: 
                 chainStartIndex = df_PER["start"].iloc[index]
                 setChainStart = False
-            # If the following if-STatement is true, than the chain has reached an end
+            #If the following if-STatement is true, than the chain has reached an end
             if not onlyPunctuation and not onlyAnd:
                 setChainStart = True
-                # editors can be the first Part of an literature reference
+                #editors can be the first Part of an literature reference
                 textFromStartUntilFirstName = text[0:df_PER["start"].iloc[0]]
-                isEditor, startIndexEditorMarker, endIndexEditorMarker = is_Editor(editorRegEx,
-                                                                                   textFromStartUntilFirstName, 0,
-                                                                                   False)
-                # print(f' getEditors, startIndexEditorMarker : {startIndexEditorMarker}')
+                isEditor, startIndexEditorMarker, endIndexEditorMarker = is_Editor(editorRegEx, textFromStartUntilFirstName, 0, False)
                 if startIndexEditorMarker == -1:
-                    isEditor, startIndexEditorMarker, endIndexEditorMarker = is_Editor(editorRegEx, textBetweenNames,
-                                                                                       df_PER["end"].iloc[index])
-                    # print(f' getEditors, startIndexEditorMarker : {startIndexEditorMarker}')
+                    isEditor, startIndexEditorMarker, endIndexEditorMarker = is_Editor(editorRegEx, textBetweenNames, df_PER["end"].iloc[index])                         
                 if isEditor:
                     startIndexEditors = chainStartIndex
                     endIndexEditors = df_PER["end"].iloc[index]
                     break
-    # print(f'getAuthorsAndEditors: return: {[startIndexAuthors,endIndexAuthors],[startIndexEditors, endIndexEditors]}')
     if startIndexEditors > -1:
         changedText, editor = replaceSubstring(startIndexEditors, endIndexEditors, text, ".")
         editor = processNames(editor)
@@ -230,223 +366,68 @@ def getEditors(text):
                 startIndexEditorMarker = startIndexEditorMarker - (len(text) - len(changedText))
                 endIndexEditorMarker = endIndexEditorMarker - (len(text) - len(changedText))
             changedText, buffer = replaceSubstring(startIndexEditorMarker, endIndexEditorMarker, changedText, ".")
-        startIndexIn = 0
+        startIndexIn = 0 
         if startIndexEditorMarker < startIndexEditors:
             startIndexEditors = startIndexEditors - (endIndexEditorMarker - startIndexEditorMarker)
             endIndexEditors = endIndexEditors - (endIndexEditorMarker - startIndexEditorMarker)
-        for i in range(startIndexEditors - 1, -1, -1):
+        for i in range(startIndexEditors-1, -1, -1):
             if isSpeceficPunctuation(changedText[i], [":", " "]):
                 startIndexIn = i + 1
                 break
-        # print(f' getEditors, startIndexIn : {startIndexIn}')
-        # print(f' getEditors, startIndexEditors : {startIndexEditors}')
         changedText, replacedEditorMarker = replaceSubstring(startIndexIn, startIndexEditors, changedText, ".")
         return changedText, editor
     return text, ""
-
-
-def getPublisher(text, doi):
-    publisher = ""
-    if doi != "":
-        url = f"https://api.crossref.org/works/{doi}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = response.json()
-            publisher = data['message'].get('publisher', 'Publisher not found')
-    if publisher != "":
-        startIndex, endIndex, publisher = getIndexOfSubstring(text, [publisher], True)
-        # double check
-        if endIndex < len(text) - 1:
-            if isSpeceficPunctuation(text[startIndex - 2]) and isSpeceficPunctuation(text[endIndex + 1]):
-                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
-                return changedText, custom_strip(publisher)
-        else:
-            if isSpeceficPunctuation(text[startIndex - 2]):
-                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
-                return changedText, publisher
-        changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
-        if publisher != "":
-            return changedText, custom_strip(publisher)
-    df_ORG = getORGTag(text, 0.8)
-    if not df_ORG.empty:
-        startIndex = df_ORG["start"].iloc[0]
-        endIndex = df_ORG["end"].iloc[0]
-        publisher = text[startIndex:endIndex]
-        # If the range determined by the tagger corresponds to a string
-        # that is only delimited by punctuation before and after, then it is most likely a publisher.
-        # startIndex - 2 because of a space inbetween
-        if endIndex < len(text) - 1:
-            if isSpeceficPunctuation(text[startIndex - 2]) and isSpeceficPunctuation(text[endIndex + 1]):
-                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
-                return changedText, custom_strip(publisher)
-        else:
-            if isSpeceficPunctuation(text[startIndex - 2]):
-                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
-                return changedText, custom_strip(publisher)
-    return text, ""
-
-
-def replaceSubstring(startIndex, endIndex, text, substituteString, ignorePunctuation=["&", "(", ")"]):
-    # The regex also checks for punctuation so that it is particularly precise.
-    # The cut text however should in normale mode be without the front delimiter of the bibTex fields in the bibiography,
-    # so that future regex are not affected. But the last delimiter belongs to the cut word so this should be removed
-    if endIndex > 0:
-        startIndexReplace = 0
-        endIndexReplace = 0
-        if startIndex > 0:
-            for i in range(startIndex, -1, -1):
-                if isSpeceficPunctuation(text[i], ignorePunctuation):
-                    startIndexReplace = i + 1
-                    break
-        else:
-            startIndexReplace = 0
-            # print(f' replaceSubstring, startIndexReplace={{{startIndexReplace}}}')
-        if endIndex < len(text):
-            for i in range(endIndex - 1, len(text), 1):
-                if isSpeceficPunctuation(text[i], ignorePunctuation):
-                    endIndexReplace = i + 1
-                    break
-                elif i == len(text) - 1:
-                    endIndexReplace = len(text)
-        else:
-            endIndexReplace = len(text)
-        # print(f' replaceSubstring, endIndexReplace={{{endIndexReplace}}}')
-        if endIndexReplace > 0:
-            changedText = text[0:startIndexReplace] + substituteString + text[endIndexReplace:len(text)]
-            return changedText, text[startIndexReplace:endIndexReplace]
-    return text, ""
-
-
-def getAddress(text):
-    df_LOC = getLOCTag(text)
-    # print(f' df_LOC, df_LOC={{{df_LOC}}}')
-    addressFound = False
-    index_df_Loc_List = df_LOC.index.values.tolist()
-    textBetweenAddress = ""
-    setChainStart = True
-    startIndex = 0
-    endIndex = 0
-    if not df_LOC.empty:
-        for index in reversed(index_df_Loc_List):
-            if index < len(index_df_Loc_List) and index > 0:
-                textBetweenAddress = text[df_LOC["end"].iloc[index - 1]:df_LOC["start"].iloc[index]]
-            else:
-                textBetweenAddress = text[:df_LOC["start"].iloc[index]]
-            onlyPunctuation = isSpeceficPunctuation(textBetweenAddress, [])
-            # wenn true, dann beginnt eine neue Autorenkette
-            if setChainStart:
-                chainEnIndex = df_LOC["end"].iloc[index]
-                # Solange das auf False, sollen der Substring erweitert werden, also start bleibt konstant
-                setChainStart = False
-            # Dann ist die Addressenkette zu Ende
-            if not onlyPunctuation:
-                startIndex = df_LOC["start"].iloc[index]
-                endIndex = chainEnIndex
-                break
-        address = text[startIndex:endIndex]
-        # If the chained range determined by the tagger corresponds to a string
-        # that is only delimited by punctuation before and after, then it is most likely a publisher.
-        # startIndex - 2 because of a space inbetween
-        # print(f' getAddress, text={{{text}}}')
-        if startIndex > 2 and endIndex < len(text) - 1:
-            if isSpeceficPunctuation(text[startIndex - 2]) and isSpeceficPunctuation(text[endIndex + 1]):
-                addressFound = True
-        else:
-            if isSpeceficPunctuation(text[startIndex - 2]):
-                addressFound = True
-        if addressFound:
-            changedText, address = replaceSubstring(startIndex, endIndex, text, "")
-            return changedText, custom_strip(address)
-    return text, ""
-
-
-def getDate(text):
-    monthYearRegex = "(January|Jan\.?|February|Feb\.?|March|Mar\.?|April|Apr\.?" \
-                     "|May|May\.?|June|Jun\.?|July|Jul\.?|August|Aug\.?|September|Sep\.?|Sept\.?|October|" \
-                     "Oct\.?|November|Nov\.?|December|Dec\.?)\s\d{4}"
-    changedText, monthYear = getSubstringByRegEx(text, [monthYearRegex])
-    # print(f' getDate, text={{{text}}}')
-    if monthYear == "":
-        yearRegEx1 = "(\.|,)? \(\d{4}\)(\.|,|:)"
-        yearRegEx2 = "(\.|,) \d{4}(\.|,|;)"
-        changedText, year = getSubstringByRegEx(text, [yearRegEx1, yearRegEx2])
-        # print(f' getDate, changedText={{{changedText}}}')
-        return changedText, "", f'{year}'
-    monthYear = monthYear.split(' ')
-    return changedText, f'{monthYear[0]}', f'{monthYear[1]}'
-
-
-def getTitel(text):
-    # print(f' getTitel 1, text={{{text}}}')
-    ignoreCharacters = ["?", "!", "(", ")", "“", "”", "\""]
-    text = custom_strip(text, ignoreCharacters)
-    ignoreCharacters = ["?", ":", "-", "(", ")", "“", "”", "\""]
-    limit = len(text) - 1
-    i = 0
-    maxIndex = 0
-    # remove pairs of punctuation marks
-    while i < limit:
-        if (i + 2 < limit) and not (text[i] == "," and text[i + 1] == " " and not isSpeceficPunctuation(text[i + 2])):
-            if isSpeceficPunctuation(text[i], ignoreCharacters) and isSpeceficPunctuation(text[i + 1],
-                                                                                          ignoreCharacters):
-                text = text[:i] + "." + text[i + 2:]
-                i = i - 1
-                limit = limit - 1
-        i = i + 1
-
-    # print(f' getTitel 2, text={{{text}}}')
-    ignoreCharacters = ["?", "!", "(", ")"]
-    if text[0] == "“":
-        text = text.rsplit('”', 1)
-        return custom_strip(text[0], ignoreCharacters), custom_strip(text[1], ignoreCharacters), ""
-    elif text[0] == "\"":
-        text = text.rsplit("\"", 1)
-        return custom_strip(text[0], ignoreCharacters), custom_strip(text[1], ignoreCharacters), ""
-    elif text.count(".") == 1:
-        # print(f' getTitel 3, text={{{text}}}')
-        text = text.split(".")
-        return custom_strip(text[0]), custom_strip(text[1]), ""
-    elif text.count(".") == 2:
-        text = text.split(".")
-        return custom_strip(text[0]), custom_strip(text[1]), custom_strip(text[2])
-    else:
-        for index, element in enumerate(text):
-            if isSpeceficPunctuation(element, [".", ",", " ", "(", ")", ":"]):
-                if maxIndex < index:
-                    maxIndex = index
-        if maxIndex > 0:
-            text = text.split(text[maxIndex])
-            return custom_strip(text[0]), custom_strip(text[1]), ""
-    if maxIndex == 0 and text.count(",") == 1:
-        # print(f' getTitel 4, text={{{text}}}')
-        text = text.split(",")
-        return custom_strip(text[0]), custom_strip(text[1]), ""
-    elif maxIndex == 0 and text.count(",") > 1:
-        text = text.rsplit(',', 1)
-        return custom_strip(text[0]), custom_strip(text[1]), ""
-    return custom_strip(text), "", ""
-
-
+    
 def getPersonTags(text):
+    
+    '''
+    Gibt die durch Named Entity Recognition erkannten dictionaries vom Typ Person in einem Dataframe zurück.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Dataframe der durch Named Entity Recognition erkannten dictionaries vom Typ Person.
+    '''
+    
     ner_tagger = pipeline("ner", aggregation_strategy="simple")
     outputs = ner_tagger(text)
     df_outputs = pd.DataFrame(outputs)
-    if not df_outputs.empty:
+    if not df_outputs.empty: 
         return df_outputs[df_outputs["entity_group"] == "PER"].reset_index(drop=True)
     return pd.DataFrame()
 
-
 def getORGTag(text, score):
+    
+    '''
+    Gibt die durch Named Entity Recognition erkannten dictionaries vom Typ Organization in einem Dataframe zurück.
+    Um in das Dataframe aufgenommen zu werden, muss ein bestimmter Score erreicht sein.
+    
+    Parameter:
+    text: Literaturstring.
+    score: Schwellenwert zwischen 0 und 1.
+    
+    return: Dataframe der durch Named Entity Recognition erkannten dictionaries vom Typ Organization.
+    '''
+    
     ner_tagger = pipeline("ner", aggregation_strategy="simple")
     outputs = ner_tagger(text)
     df_outputs = pd.DataFrame(outputs)
     if not df_outputs.empty:
-        return df_outputs[(df_outputs["entity_group"] == "ORG") & (df_outputs["score"] >= score)].reset_index(
-            drop=True).tail(1)
+        return df_outputs[(df_outputs["entity_group"] == "ORG") & (df_outputs["score"] >= score)].reset_index(drop=True).tail(1)
     return pd.DataFrame()
 
-
 def getLOCTag(text):
+    
+        
+    '''
+    Gibt die durch Named Entity Recognition erkannten dictionaries vom Typ Location in einem Dataframe zurück.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Dataframe der durch Named Entity Recognition erkannten dictionaries vom Typ Location.
+    '''
+    
     ner_tagger = pipeline("ner", aggregation_strategy="simple")
     outputs = ner_tagger(text)
     df_outputs = pd.DataFrame(outputs)
@@ -454,33 +435,111 @@ def getLOCTag(text):
         return df_outputs[(df_outputs["entity_group"] == "LOC")].reset_index(drop=True)
     return pd.DataFrame()
 
-
 def getDoi(text):
+    
+    '''
+    Schneidet die DOI aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne DOI und die ausgeschnittene DOI.
+    '''
+    
     doiUrlRegEx1 = "https:\/\/doi\.org(\/[^\s]*)?$"
     doiUrlRegEx2 = "(DOI|doi):\s?(https:\/\/doi\.org)?([^\s]*)+$"
-    text, doi = getSubstringByRegEx(text, [doiUrlRegEx1, doiUrlRegEx2])
+    changedText, doi  = getSubstringByRegEx(text, [doiUrlRegEx1, doiUrlRegEx2])
     httpsDomainRegEx1 = "https:\/\/doi\.org\/"
     httpsDomainRegEx2 = "(DOI|doi):\s?(https:\/\/doi\.org\/)?"
     doi, httpsDomain = getSubstringByRegEx(doi, [httpsDomainRegEx1, httpsDomainRegEx2])
-    return text, custom_strip(doi)
+    return changedText, custom_strip(doi)
 
+def getURL(text):
+        
+    '''
+    Schneidet die URL aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne URL und die ausgeschnittene URL.
+    '''
+    
+    urlRegEx = "(URL:|url:)?\s*https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?::\d+)?(?:/[^\s]*)?"
+    changedText, url = getSubstringByRegEx(text, [urlRegEx])
+    urlPrefixRegEx = r"(url:\s*|URL:\s*)"
+    url = re.sub(urlPrefixRegEx, '', url).strip()
+    return changedText, custom_strip(url)
 
-def getKey(author, year):
-    lastNameFirstAuthor = author.split(" and ")[0].strip().split(" ")[-1]
-    return f'{lastNameFirstAuthor}_{year}'
+def getDate(text):
+            
+    '''
+    Schneidet Date aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Date und ausgeschnittene Date.
+    '''
+    
+    monthYearRegex = "(January|Jan\.?|February|Feb\.?|March|Mar\.?|April|Apr\.?" \
+    "|May|May\.?|June|Jun\.?|July|Jul\.?|August|Aug\.?|September|Sep\.?|Sept\.?|October|" \
+    "Oct\.?|November|Nov\.?|December|Dec\.?)\s\d{4}"
+    changedText, monthYear  = getSubstringByRegEx(text, [monthYearRegex])
+    if monthYear == "":
+        yearRegEx1 = "(\.|,)? \(\d{4}\)(\.|,|:)"
+        yearRegEx2 = "(\.|,) \d{4}(\.|,|;)"
+        changedText, year  = getSubstringByRegEx(text, [yearRegEx1, yearRegEx2])
+        return changedText, "", f'{year}'
+    monthYear = monthYear.split(' ')
+    return changedText, f'{monthYear[0]}', f'{monthYear[1]}'
 
+def getPage(text):
+                
+    '''
+    Schneidet Page aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Page und ausgeschnittene Page.
+    '''
+    
+    pageRegEx = "(?:pp\.? )?\d+(-|--|–)\d+"
+    changedText, pages = getSubstringByRegEx(text, [pageRegEx])
+    if pages != "":
+        pages = re.search(r'\d+(-|--|–)\d+', pages).group()
+    return changedText, custom_strip(pages)
 
-def getSubstringByRegEx(text, regex=[]):
+def getSubstringByRegEx(text, regex = []):
+    
+    '''
+    Prüft für eine Liste von RegEx, ob sie in text vorkommen. Der RegEx, der den Substring mit der grötßen
+    Länge ermittelt, kommt zum Zuge. Dieser Substring wird dann aus dem text ausgeschnitten. Ein RegEx wird
+    dabei von hinten beginnend in text geprüft und der erste Match zählt.
+    
+    Parameter:
+    text: Literaturstring.
+    regEx = []: Liste mit RegEx. 
+    
+    return: Literaturstring ohne Substring und ausgeschnittenen Substring
+    '''
+    
     startIndex, endIndex, substring = getIndexOfSubstring(text, regex, True)
-    # print(f' getSubstringByRegEx, startIndex={{{startIndex}}}')
-    # print(f' getSubstringByRegEx, startIndex={{{endIndex}}}')
-    # print(f' getSubstringByRegEx, text={{{substring}}}')
     changedText, substring = replaceSubstring(startIndex, endIndex, text, "")
-    # print(f' getSubstringByRegEx, changedText={{{changedText}}}')
     return changedText, custom_strip(substring)
 
-
 def getVolumeNumber(text):
+                    
+    '''
+    Schneidet Volume und Number aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Volume und Number und ausgeschnittene Volume und Number.
+    '''
+    
     volumeAndNumberRegex = "(\d+\(\d+\)|\d+\.\d+)"
     startIndex, endIndex, substring = getIndexOfSubstring(text, [volumeAndNumberRegex], True)
     if startIndex > -1:
@@ -498,10 +557,7 @@ def getVolumeNumber(text):
         number4RegEx = "\.\d+"
         startIndex, endIndex, volume = getIndexOfSubstring(text, [volumeRegEx, volumeRegEx2, volumeRegEx3], True)
         changedText, substring = replaceSubstring(startIndex, endIndex, text, "")
-        # print(f' getVolumeNumber, changedText={{{changedText}}}')
-        startIndex, endIndex, number = getIndexOfSubstring(changedText,
-                                                           [number1RegEx, number2RegEx, number3RegEx, number4RegEx],
-                                                           True)
+        startIndex, endIndex, number = getIndexOfSubstring(changedText, [number1RegEx, number2RegEx, number3RegEx, number4RegEx], True)
         changedText, substring = replaceSubstring(startIndex, endIndex, changedText, "")
         if volume != "":
             volume = re.search(r'\d+', volume).group(0)
@@ -509,11 +565,185 @@ def getVolumeNumber(text):
             number = re.search(r'\d+', number).group(0)
         return changedText, volume, number
 
+def getEdition(text):
+                        
+    '''
+    Schneidet Edition aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Edition und ausgeschnittene Edition.
+    '''
+    
+    editionRegEx1 = "(?:[1-9]\d*th|11th|12th|13th|[1-9]\d*(?:st|nd|rd)) ed\."
+    editionRegEx2 = "(?:[1-9]\d*th|11th|12th|13th|[1-9]\d*(?:st|nd|rd)) edn\."
+    changedText, edition = getSubstringByRegEx(text, [editionRegEx1, editionRegEx2])
+    if edition != "":
+        edition = re.search(r'\d+', edition).group()
+    return changedText, custom_strip(edition)
 
-# search_terms = [", et al.", " et al."]
-# firstStartIndex, firstEndIndex, etAl = find_First_Term(text, search_terms)
-# if firstStartIndex > -1:
-# text = replaceSubstring(firstStartIndex, firstEndIndex, text, ", ")
+def getAddress(text):
+                            
+    '''
+    Schneidet Address aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Address und ausgeschnittene Address.
+    '''
+    
+    df_LOC = getLOCTag(text)
+    addressFound = False
+    index_df_Loc_List = df_LOC.index.values.tolist()
+    textBetweenAddress = ""
+    setChainStart = True
+    startIndex = 0
+    endIndex = 0
+    if not df_LOC.empty:
+        for index in reversed(index_df_Loc_List):
+            if index < len(index_df_Loc_List) and index > 0:
+                textBetweenAddress = text[df_LOC["end"].iloc[index-1]:df_LOC["start"].iloc[index]]
+            else:
+                textBetweenAddress = text[:df_LOC["start"].iloc[index]]
+            onlyPunctuation = isSpeceficPunctuation(textBetweenAddress, [])
+            if setChainStart: 
+                chainEnIndex = df_LOC["end"].iloc[index]
+                setChainStart = False
+            if not onlyPunctuation:
+                startIndex = df_LOC["start"].iloc[index]
+                endIndex = chainEnIndex
+                break
+        address = text[startIndex:endIndex]
+        if startIndex > 2 and endIndex < len(text) - 1:
+            if isSpeceficPunctuation(text[startIndex - 2]) and isSpeceficPunctuation(text[endIndex + 1]):
+                addressFound = True
+        else:
+            if isSpeceficPunctuation(text[startIndex - 2]):
+                addressFound = True
+        if addressFound:
+            changedText, address = replaceSubstring(startIndex, endIndex, text, "")
+            return changedText, custom_strip(address)
+    return text, ""  
+
+def getPublisher(text, doi):
+                                
+    '''
+    Schneidet Publisher aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    doi: DOI, um Publisher in externen Datenbanken zu suchen.
+    
+    return: Literaturstring ohne Publisher und ausgeschnittenen Publisher.
+    '''
+    
+    publisher = ""
+    if doi != "":
+        url = f"https://api.crossref.org/works/{doi}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            publisher = data['message'].get('publisher', 'Publisher not found')
+    if publisher != "":
+        startIndex, endIndex, publisher = getIndexOfSubstring(text, [publisher], True)
+        if endIndex < len(text) -1:
+            if isSpeceficPunctuation(text[startIndex - 2]) and isSpeceficPunctuation(text[endIndex + 1]):
+                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
+                return changedText, custom_strip(publisher)
+        else:
+            if isSpeceficPunctuation(text[startIndex - 2]):
+                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
+                return changedText, publisher
+        changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
+        if publisher != "":
+            return changedText, custom_strip(publisher)
+    df_ORG = getORGTag(text, 0.8)
+    if not df_ORG.empty:
+        startIndex = df_ORG["start"].iloc[0]
+        endIndex = df_ORG["end"].iloc[0]
+        publisher = text[startIndex:endIndex]
+        if endIndex < len(text) -1:
+            if isSpeceficPunctuation(text[startIndex - 2]) and isSpeceficPunctuation(text[endIndex + 1]):
+                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
+                return changedText, custom_strip(publisher)
+        else:
+            if isSpeceficPunctuation(text[startIndex - 2]):
+                changedText, publisher = replaceSubstring(startIndex, endIndex, text, "")
+                return changedText, custom_strip(publisher)
+    return text, ""
+    
+def getTitel(text):
+                                    
+    '''
+    Schneidet Titel aus dem Literaturstring aus.
+    
+    Parameter:
+    text: Literaturstring.
+    
+    return: Literaturstring ohne Titel und ausgeschnittenen Titel.
+    '''
+    
+    ignoreCharacters = ["?", "!", "(", ")", "“", "”", "\""]
+    text = custom_strip(text, ignoreCharacters)
+    ignoreCharacters = ["?", ":", "-", "(", ")", "“", "”", "\""]
+    limit = len(text) - 1
+    i = 0
+    maxIndex = 0
+    while i < limit:
+        if (i + 2 < limit) and not (text[i] == "," and text[i+1] == " " and not isSpeceficPunctuation(text[i+2])):
+            if isSpeceficPunctuation(text[i], ignoreCharacters) and isSpeceficPunctuation(text[i+1], ignoreCharacters):
+                text = text[:i] + "." + text[i+2:]
+                i = i - 1
+                limit = limit - 1
+        i = i +1
+    
+    ignoreCharacters = ["?", "!", "(", ")"]
+    if text[0] == "“":
+        text = text.rsplit('”', 1)
+        return custom_strip(text[0], ignoreCharacters), custom_strip(text[1], ignoreCharacters), ""
+    elif text[0] == "\"":
+        text = text.rsplit("\"", 1)
+        return custom_strip(text[0], ignoreCharacters), custom_strip(text[1], ignoreCharacters), ""
+    elif text.count(".") == 1:
+        text = text.split(".")
+        return custom_strip(text[0]), custom_strip(text[1]), ""
+    elif text.count(".") == 2:
+        text = text.split(".")
+        return custom_strip(text[0]), custom_strip(text[1]), custom_strip(text[2])
+    else:
+        for index, element in enumerate(text):
+            if isSpeceficPunctuation(element, [".", ",", " ", "(", ")", ":"]):
+                if maxIndex < index:
+                    maxIndex = index
+        if maxIndex > 0:
+            text = text.split(text[maxIndex])
+            return custom_strip(text[0]), custom_strip(text[1]), ""
+    if maxIndex == 0 and text.count(",") == 1: 
+        text = text.split(",")
+        return custom_strip(text[0]), custom_strip(text[1]), ""
+    elif maxIndex == 0 and text.count(",") > 1:
+        text = text.rsplit(',', 1)
+        return custom_strip(text[0]), custom_strip(text[1]), ""
+    return custom_strip(text), "", ""
+    
+    
+def getKey(author, year):
+                                        
+    '''
+    Erzeugt einen Key aus dem Nachnamen des ersten Autors und dem Jahr.
+    
+    Parameter:
+    author: Autoren.
+    year: Jahr.
+    
+    return: Erzeugter Schlüssel.
+    '''
+    
+    lastNameFirstAuthor = author.split(" and ")[0].strip().split(" ")[-1]
+    return f'{lastNameFirstAuthor}_{year}'
+
 
 def create_bibtex(text):
     address = ""
@@ -545,156 +775,99 @@ def create_bibtex(text):
     isInProceedings = False
     isIncollection = False
     isArticle = False
-
-    urlRegEx = "(URL:|url:)?\s*https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?::\d+)?(?:/[^\s]*)?"
-    pageRegEx = "(?:pp\.? )?\d+(-|–)\d+"
-    edition1 = "(?:[1-9]\d*th|11th|12th|13th|[1-9]\d*(?:st|nd|rd)) ed\."
-    edition2 = "(?:[1-9]\d*th|11th|12th|13th|[1-9]\d*(?:st|nd|rd)) edn\."
-
+    
     text, author = getAuthors(text)
     text, editor = getEditors(text)
-    # print(f' main, text={{{text}}}')
     text, doi = getDoi(text)
-    text, url = getSubstringByRegEx(text, [urlRegEx])
+    text, url = getURL(text)
     text, month, year = getDate(text)
-    # print(f' main 2, text={{{text}}}')
-    text, pages = getSubstringByRegEx(text, [pageRegEx])
-    if pages != "":
-        pages = re.search(r'\d+(-|–)\d+', pages).group()
-    # print(f' main 3, text={{{text}}}')
+    text, page = getPage(text)
     text, volume, number = getVolumeNumber(text)
-    text, edition = getSubstringByRegEx(text, [edition1, edition2])
-    if edition != "":
-        edition = re.search(r'\d+', edition).group()
-    # BUGFIX: Wenn nur num vorkommt, dann schneidet volume die Zahl von num aus!!!!!!
-    # volume3 darf also erst geprüft werden, wenn num1 und num2 geprüft wurden.
-    # VOlumer erscheint aber immre vor number
-    # print(f' main, text2={{{text}}}')
+    text, edition = getEdition(text)
     text, address = getAddress(text)
     text, publisher = getPublisher(text, doi)
     school = publisher
-    # print(f' main 4, text={{{text}}}')
     title, booktitle, series = getTitel(text)
     journal = booktitle
     if author != "":
         key = getKey(author, year)
     else:
         key = getKey(editor, year)
-
+    
     bookFields = [author, title, publisher, year, volume, number, \
                   series, address, edition, month, note, key, editor, \
                   howpublished, organization, chapter, pages, isbn, url]
     inproceedingsFields = [author, title, booktitle, year, editor, volume, \
-                           number, series, pages, address, month, organization, \
-                           publisher, note, key, doi, url]
+                            number, series, pages, address, month, organization, \
+                            publisher, note, key, doi, url]
     proceedingsFields = [title, year, editor, volume, number, series, \
-                         address, month, organization, publisher, note, key, doi, url]
+                          address, month, organization, publisher, note, key, doi, url]
     incollectionFields = [author, title, booktitle, publisher, year, editor, \
-                          volume, number, series, chapter, pages, address, \
-                          edition, month, note, key, doi, url]
+                           volume, number, series, chapter, pages, address, \
+                           edition, month, note, key, doi, url]
     articleFields = [author, title, journal, year, volume, number, \
-                     pages, month, note, key, doi, url]
+                      pages, month, note, key, doi, url]
     phdthesisFields = [author, title, publisher, year, address, month, \
-                       note, key, doi, url]
-
+                        note, key, doi, url]
+    
     bookFieldsString = ["author", "title", "publisher", "year", "volume", "number", \
-                        "series", "address", "edition", "month", "note", "key", "editor", \
-                        "howpublished", "organization", "chapter", "pages", "isbn", "url"]
-    inproceedingsFieldsString = ["author", "title", "booktitle", "year", "editor", "volume", \
-                                 "number", "series", "pages", "address", "month", "organization", \
-                                 "publisher", "note", "key", "doi", "url"]
-    proceedingsFieldsString = ["title", "year", "editor", "volume", "number", "series", \
-                               "address", "month", "organization", "publisher", "note", "key", "doi", "url"]
-    incollectionFieldsString = ["author", "title", "booktitle", "publisher", "year", "editor", \
-                                "volume", "number", "series", "chapter", "pages", "address", \
-                                "edition", "month", "note", "key", "doi", "url"]
-    articleFieldsString = ["author", "title", "journal", "year", "volume", "number", \
-                           "pages", "month", "note", "key", "doi", "url"]
-    phdthesisFieldsString = ["author", "title", "school", "year", "address", "month", \
-                             "note", "key", "doi", "url"]
+                  "series", "address", "edition", "month", "note", "key", "editor", \
+                  "howpublished", "organization", "chapter", "pages", "isbn", "url"]
+    inproceedingsFieldsString  = ["author", "title", "booktitle", "year", "editor", "volume", \
+                            "number", "series", "pages", "address", "month", "organization", \
+                            "publisher", "note", "key", "doi", "url"]
+    proceedingsFieldsString  = ["title", "year", "editor", "volume", "number", "series", \
+                          "address", "month", "organization", "publisher", "note", "key", "doi", "url"]
+    incollectionFieldsString  = ["author", "title", "booktitle", "publisher", "year", "editor", \
+                           "volume", "number", "series", "chapter", "pages", "address", \
+                           "edition", "month", "note", "key", "doi", "url"]
+    articleFieldsString  = ["author", "title", "journal", "year", "volume", "number", \
+                      "pages", "month", "note", "key", "doi", "url"]
+    phdthesisFieldsString  = ["author", "title", "school", "year", "address", "month", \
+                        "note", "key", "doi", "url"]
 
-    models = [
-        "LaLaf93/proceedings_recognizer",
-        "LaLaf93/inproceedings_recognizer",
-        "LaLaf93/book_recognizer",
-        "LaLaf93/incollection_recognizer",
-        "LaLaf93/article_recognizer",
-        "LaLaf93/phdthesis_recognizer"
-    ]
-
-    labels = [
-        "proceedings",
-        "inproceedings",
-        "book",
-        "incollection",
-        "article",
-        "phdthesis"
-    ]
-
-    classifierDict = {}
-
-    for model, label in zip(models, labels):
-        result = pipeline("text-classification", model=model)(text)[0]
-        classifierDict[label] = result
-
-    # print(f'classifierDict: {classifierDict}')
-    literatureType = ""
-    highestScore = 0
-    highetsScoreLabel = ""
-    for entry in classifierDict.values():
-        if entry['score'] > highestScore and not entry['label'].startswith('NON'):
-            highestScore = entry['score']
-            highetsScoreLabel = entry['label']
-    literatureType = highetsScoreLabel
-    # print(literatureType)
-    if literatureType == "":
-        for entry in classifierDict.values():
-            lowestScore = 1
-            lowestScoreLabel = ""
-            if entry['score'] < lowestScore and entry['label'].startswith('NON'):
-                lowestScore = entry['score']
-                lowestScoreLabel = entry['label'].replace('NON', '')
-        literatureType = lowestScoreLabel
-
+    model = "LaLaf93/LiteratureTyp_recognizer"
+    classifier = pipeline("text-classification", model=model)
+    literatureType = classifier(title + "." + booktitle)[0]['label']
+    
     bibTex = "@"
     if literatureType == "book":
         zippedFieldsValues = zip(bookFieldsString, bookFields)
         zippedList = list(zippedFieldsValues)
         bibTex += f"book{{{key}, \n"
         for field in zippedList:
-            bibTex += f'{field[0]}={{{field[1]}}},\n'
+            bibTex += f'{field[0]}={{{field[1]}}},\n' 
     elif literatureType == "proceedings":
         zippedFieldsValues = zip(proceedingsFieldsString, proceedingsFields)
         zippedList = list(zippedFieldsValues)
         bibTex += f"proceedings{{{key}, \n"
         for field in zippedList:
-            bibTex += f'{field[0]}={{{field[1]}}},\n'
+            bibTex += f'{field[0]}={{{field[1]}}},\n' 
     elif literatureType == "inproceedings":
         zippedFieldsValues = zip(inproceedingsFieldsString, inproceedingsFields)
         zippedList = list(zippedFieldsValues)
         bibTex += f"inproceedings{{{key}, \n"
         for field in zippedList:
-            bibTex += f'{field[0]}={{{field[1]}}},\n'
+            bibTex += f'{field[0]}={{{field[1]}}},\n' 
     elif literatureType == "incollection":
         zippedFieldsValues = zip(incollectionFieldsString, incollectionFields)
         zippedList = list(zippedFieldsValues)
         bibTex += f"incollection{{{key}, \n"
         for field in zippedList:
-            bibTex += f'{field[0]}={{{field[1]}}},\n'
+            bibTex += f'{field[0]}={{{field[1]}}},\n' 
     elif literatureType == "article":
         zippedFieldsValues = zip(articleFieldsString, articleFields)
         zippedList = list(zippedFieldsValues)
         bibTex += f"article{{{key}, \n"
         for field in zippedList:
-            bibTex += f'{field[0]}={{{field[1]}}},\n'
+            bibTex += f'{field[0]}={{{field[1]}}},\n' 
     else:
         zippedFieldsValues = zip(phdthesisFieldsString, phdthesisFields)
         zippedList = list(zippedFieldsValues)
         bibTex += f"phdthesis{{{key}, \n"
         for field in zippedList:
-            bibTex += f'{field[0]}={{{field[1]}}},\n'
-
-            # Idee: Mit Pos-Tagging herausfinden, wo Nomen etc. vorkommen und dann titel und Booktitel eingrenzen
+            bibTex += f'{field[0]}={{{field[1]}}},\n' 
+    
     bibTex += '}'
 
-    return bibTex
+    return bibTex 
