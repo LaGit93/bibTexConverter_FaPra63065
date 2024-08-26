@@ -1,6 +1,5 @@
 import torch
 import pandas as pd
-torch.cuda.is_available()
 from transformers import pipeline
 import re
 import string
