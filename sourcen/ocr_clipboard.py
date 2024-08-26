@@ -4,6 +4,14 @@ import re
 import pandas as pd
 
 def language_codes():
+    '''
+    Erzeugen einer Liste mit Sprachen-Codes, die im Paket pytesseract verwendet werden
+    
+    Parameter: keine
+    
+    return: Liste mit Sprachen-Codes. 
+    '''
+    
     # Liste mit den 30 häufigsten Sprachen in deutscher Abkürzung
     language_codes_de = [
         'eng', 'afr', 'ara', 'ben', 'bul', 'cat', 'ces', 'chi_sim', 'chi_tra', 'chr', 'dan',
@@ -16,6 +24,14 @@ def language_codes():
     return language_codes_de
 
 def language_names():
+    '''
+    Erzeugen einer Liste mit Klarnamen der Sprachen, die in der Benutzeroberfläche im Dropdownmenü angezeigt werden.
+    
+    Parameter: keine
+    
+    return: Liste mit Klarnamen der Sprachen. 
+    '''
+    
     # Deutsche Namen der Sprachen
     language_names_de = [
         'Englisch', 'Afrikaans', 'Arabisch', 'Bengalisch', 'Bulgarisch', 'Katalanisch', 'Tschechisch',
@@ -51,6 +67,15 @@ def language_names():
 
 
 def remove_enumeration(text):
+    '''
+    Entfernt alle Aufzählungen durch RegEx aus einem String.
+    
+    Parameter: String, der Aufzählungszeichen wie 1. oder [1] beinhaltet.
+    
+    return: Bereinigter String ohne Aufzählungszeichen.
+    '''
+
+    
     # Entfernt Aufzählungen aus String
     #
     lines = text.split('\n')
@@ -68,6 +93,15 @@ def remove_enumeration(text):
 
 
 def newocr(selected_language):
+    '''
+    Liest den Inhalt der Zwischenablage über OCR aus und teilt den Inhalt bei Bedarf in einzelne Referenzen. Die 
+    Trennungen werden anhand von Leerzeilen und Aufzählungszeichen ermittelt.
+    
+    Parameter: ausgewählt Sprache zur Erkennung von Sonderzeichen in OCR
+    
+    return: String mit Referenzen, die durch Leerzeilen voneinander getrennt sind.
+    '''
+    
     # DataFrame aus Language_Code und Language_Name erstellen
     df_languages = pd.DataFrame(list(zip(language_codes(), language_names())),columns=['Language Code', 'Language Name'])
 
