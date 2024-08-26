@@ -90,7 +90,6 @@ conda env list
 Sollte die virtuelle Umgebung nicht entfernt worden sein, können Sie auf Ihrem System
 im Ordner miniconda den Ordner ```bibTexConverter``` manuell löschen.
 
----
 
 ## Workflow
 
