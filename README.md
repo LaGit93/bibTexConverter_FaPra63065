@@ -115,5 +115,5 @@ Im unteren Textfeld wird der BibTex-Code erzeugt. Passen Sie den Code ggf. händ
 
 ### 3. Speichern der konvertierten Referenzen
 Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button ```Download txt-file``` klicken.
-Sie können vorher noch einen Dateinamen vergeben (default ist *BibTexConverter*)
+Sie können vorher noch einen Dateinamen vergeben (default ist *BibTexConverter*).
 
