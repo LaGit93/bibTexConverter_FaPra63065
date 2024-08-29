@@ -97,10 +97,6 @@ An dieser Stelle soll die Funktionsweise des BibTex-Konverters komprimiert darge
 Eine detaillierte Beschreibung der Benutzeroberfläche sowie ihres Aufrufs befindet sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter/#Benutzeroberfl%C3%A4che)
 dieses Repositories. 
 
-<p align="center">
-<img src="https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/Dokumente/WebApp.jpeg" width="500"/>
-</p>
-
 Öffnen Sie zunächst die Conda-Shell und führen sie folgenden Befehl zum starten der virtuellen Umgebung aus:
 ```
 conda activate bibTexConverter
