@@ -94,7 +94,7 @@ im Ordner miniconda den Ordner ```bibTexConverter``` manuell löschen.
 ## Workflow
 
 An dieser Stelle soll die Funktionsweise des BibTex-Konverters komprimiert dargestellt werden.
-Eine detaillierte Beschreibung der Benutzeroberfläche befindet sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter/#Benutzeroberfl%C3%A4che)
+Eine detaillierte Beschreibung der Benutzeroberfläche sowie ihres Aufrufs befindet sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter/#Benutzeroberfl%C3%A4che)
 dieses Repositories. 
 
 <p align="center">
