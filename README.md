@@ -101,6 +101,16 @@ dieses Repositories.
 <img src="https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/Dokumente/WebApp.jpeg" width="500"/>
 </p>
 
+Öffnen Sie zunächst die Conda-Shell und führen sie folgenden Befehl zum starten der virtuellen Umgebung aus:
+```
+conda activate bibTexConverter
+```
+
+Öffnen Sie in einem Webbrowser ein neues Fenster und öffnen Sie die  http://127.0.0.1:5000 , in dem die Benutzeroberfläche erzeugt wird:
+<p align="center">
+<img src="https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/Dokumente/WebApp.jpeg" width="500"/>
+</p>
+
 Die Nutzung des Tools erfolgt in drei Schritten:
 
 ### 1. Referenzen als Input:
