@@ -39,7 +39,7 @@ folgende Dateien und Ordner aus dem Verzeichnis ```sourcen``` in Ihrem Projektve
 Für den Fall, dass Sie bereits alle erforderlichen Pakete lokal installiert haben, die in der
 Datei [conda.yaml](https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/sourcen/conda.yaml)
 aufgelistet sind, können Sie den Installationsvorgang hier abbrechen. Wenn Sie die 
-Nutzung von virtuellen Umgebungen nutzen bevorzugen, fahren Sie bitte mit den 
+Nutzung von virtuellen Umgebungen bevorzugen, fahren Sie bitte mit den 
 Schritten 2 und 3 fort.
 
 
@@ -94,9 +94,15 @@ im Ordner miniconda den Ordner ```bibTexConverter``` manuell löschen.
 ## Workflow
 
 An dieser Stelle soll die Funktionsweise des BibTex-Konverters komprimiert dargestellt werden.
-Eine detaillierte Beschreibung der Benutzeroberfläche befindet sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter/#Benutzeroberfl%C3%A4che)
+Eine detaillierte Beschreibung der Benutzeroberfläche sowie ihres Aufrufs befindet sich im [Wiki](https://github.com/LaGit93/bibTexConverter_FaPra63065/wiki/BibTex%E2%80%90Konverter/#Benutzeroberfl%C3%A4che)
 dieses Repositories. 
 
+Öffnen Sie zunächst die Conda-Shell und führen sie folgenden Befehl zum starten der virtuellen Umgebung aus:
+```
+conda activate bibTexConverter
+```
+
+Führen Sie anschließend das main.py Skript aus, um den Flask-Server zu starten. Öffnen Sie in einem Webbrowser ein neues Fenster und öffnen Sie die  http://127.0.0.1:5000 , in dem die Benutzeroberfläche erzeugt wird:
 <p align="center">
 <img src="https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/Dokumente/WebApp.jpeg" width="500"/>
 </p>
@@ -106,13 +112,14 @@ Die Nutzung des Tools erfolgt in drei Schritten:
 ### 1. Referenzen als Input:
 Fügen Sie die Referenz als Text (Referenzstring) in das obere Textfeld ein. Liegt die 
 Referenz hingegen als Bild o.ä. vor, erstellen Sie ein Screenshot der Referenz und klicken Sie auf den Button ```OCR Read```. 
-Stellen Sie für das Erkennen sprachspezifischer Sonderzeichen die korrekte Sprache ein (default ist englisch).
+Stellen Sie für das Erkennen sprachspezifischer Sonderzeichen die korrekte Sprache ein (default ist Englisch).
 Der BibTex-Konverter kann mehrere Referenzen als Batch-Konvertierung durchführen. Trennen Sie die Referenzen jeweils mit einer Leerzeile.
+
 ### 2. Konvertieren in BibTex
-Überprüfen Sie die den Referenzstring auf offensichtliche Fehler (Sonderzeichen, fehlerhafte Namen etc.) , die durch das Kopieren oder durch die OCR entstanden sind und klicken Sie auf den Button ```Convert```.
+Überprüfen Sie den Referenzstring auf offensichtliche Fehler (Sonderzeichen, fehlerhafte Namen etc.), die durch das Kopieren oder durch die OCR entstanden sind und klicken Sie auf den Button ```Convert```.
 Im unteren Textfeld wird der BibTex-Code erzeugt. Passen Sie den Code ggf. händisch an.
 
 ### 3. Speichern der konvertierten Referenzen
 Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button ```Download txt-file``` klicken.
-Sie können vorher noch einen Dateinamen vergeben (default ist *BibTexConverter*)
+Sie können vorher noch einen Dateinamen vergeben (default ist *BibTexConverter*).
 
