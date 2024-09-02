@@ -3,7 +3,6 @@ import pandas as pd
 from transformers import pipeline
 import re
 import string
-import spacy
 import requests
 
 def create_bibtex_loop(multi_refstrings):
@@ -34,10 +33,10 @@ def custom_strip(text, replaceCharacter = []):
     Zeichen “ und ” entfernt.
     
     Parameter:
-    text: Text, der gestripped werden soll.
-    replaceCharacter = []: Liste von Zeichen, die für den Strip nicht berücksichtigt werden sollen.
+    text: String, der gestripped werden soll.
+    replaceCharacter: Liste von Zeichen, die für den Strip nicht berücksichtigt werden sollen.
     
-    return: gestrippter Text.
+    return: gestrippter String.
     '''
     
     allowed_chars = string.punctuation + string.whitespace + "“" + "”"
@@ -49,8 +48,8 @@ def custom_strip(text, replaceCharacter = []):
 def getIndexOfSubstring(text, regEx = [], reverse = False):
     
     '''
-    Prüft für eine Liste von RegEx, ob sie im String namens text vorkommen. Der RegEx, der den Substring mit der grötßen
-    Länge ermittelt, kommt zum Zuge. Für ein RegEx wird nur der erste Match berücksichtigt. 
+    Prüft für eine Liste von RegEx, ob sie im String namens text vorkommen. Pro RegEx wird nur 
+    der erste Match berücksichtigt. Der Match, der den Substring mit der größten Länge ermittelt, kommt zum Zuge. 
     
     Parameter:
     text: Text, wo das Auftreten des RegEx geprüft wird.
@@ -64,11 +63,8 @@ def getIndexOfSubstring(text, regEx = [], reverse = False):
     length = 0
     matches = []
     substring = ""
-    #print(f'regEx: {regEx}')
-    #print(f'text: {text}')
     for regExElement in regEx:
         matches = list(re.finditer(regExElement, text))
-        #print(f'matches: {matches}')
         if matches:
             if reverse:
                 match = matches[-1]
@@ -84,14 +80,32 @@ def getIndexOfSubstring(text, regEx = [], reverse = False):
         return startIndex, endIndex, substring   
     return -1, -1, substring
 
+def getSubstringByRegEx(text, regex = []):
+    
+    '''
+    Prüft für eine Liste von RegEx, ob sie im String namens text vorkommen. Der RegEx, der den Substring mit der grötßen
+    Länge ermittelt, kommt zum Zuge. Dieser Substring wird dann aus dem text ausgeschnitten. Ein RegEx wird
+    dabei von hinten beginnend in text geprüft und der erste Match zählt.
+    
+    Parameter:
+    text: Literaturstring.
+    regEx = []: Liste mit RegEx. 
+    
+    return: String ohne Substring (changedText) und ausgeschnittenen Substring
+    '''
+    
+    startIndex, endIndex, substring = getIndexOfSubstring(text, regex, True)
+    changedText, substring = replaceSubstring(startIndex, endIndex, text, "")
+    return changedText, custom_strip(substring)
+
 def replaceSubstring (startIndex, endIndex, text, substituteString, ignorePunctuation = ["&", "(", ")"]):
     
     '''
     Ersetzt in dem String namens text einen Substring durch einen anderen String namens substituteString.
-    Die Variablen startIndex und endIndex können dabei noch verändert werden, von vor der Postion startIndex oder nach der
+    Die Variablen startIndex und endIndex können dabei noch verändert werden, webb vor der Postion startIndex oder nach der
     Position endIndex bestimmte Zeichen folgen, die mit entfernt werden sollen. Die Existenz dieser bestimmten Zeichen 
     wird mit der Funktion isSpeceficPunctuation geprüft. Mit dem Parameter ignorePunctuation wird auf die Prüfung
-    bestimmter Zeichen verzichtet.
+    bestimmter Zeichen in der Funktion isSpeceficPunctuation verzichtet.
     
     Parameter:
     startIndex: Index, wo der zu ersetztende Substring im String namens text eingefügt werden soll.
@@ -167,7 +181,7 @@ def is_NameShortened(df_PER):
 def isSpeceficPunctuation(text, replaceCharacter = []):
     
     '''
-    Prüft, ob ein Sring nur aus bestimmten Satzzeichen besteht. Standardmäßig wird string.punctuation + string.whitespace
+    Prüft, ob ein Srting nur aus bestimmten Satzzeichen besteht. Standardmäßig wird string.punctuation + string.whitespace
     geprüft.
     
     Parameter:
@@ -183,14 +197,14 @@ def isSpeceficPunctuation(text, replaceCharacter = []):
 def is_Editor(editorRegEx, textBetweenNames, startIndexTextBetweenNames, markerBehind = True):
     
     '''
-    Prüft, ob es sich bei einem String um ein Signalwort für Editoren handelt.
+    Prüft, ob in dem String textBetweenNames ein Signalwort für Editoren enthalten ist.
     
     Parameter:
     editorRegEx: RegEx, die Signalwörter für das Auftreten von Editoren erkennen sollen.
     textBetweenNames: Substring vom Literaturstring, der geprüft weden soll, ob das Signalwort enthalten ist. Dieser 
     Substring steht stehts zwischen potententiellen Namen.
     startIndexTextBetweenNames: Startindex, wo Substring im original Literaturstring steht. Signalwörter können dabei nicht
-    Bestandteil von Namen sein, sondern immer nur dazwischen. Daher der Name des Parameters.
+    Bestandteil von einer Namenskette sein, sondern immer nur zwischen solchen Namensketten. Daher der Name des Parameters.
     markerBehind: Ob das Signalwort für Editoren vor oder hinter den Editorennamen im original Literaturstring steht.
     
     return: Boolean, ob gefunden, und Start- und Endindizies, wo es im original Literaturstring vorkommt.
@@ -199,6 +213,18 @@ def is_Editor(editorRegEx, textBetweenNames, startIndexTextBetweenNames, markerB
     startSubstring, endSubstring, substring = getIndexOfSubstring(textBetweenNames, [editorRegEx])
     if startIndexTextBetweenNames > -1 and markerBehind:
         if isSpeceficPunctuation(textBetweenNames[startIndexTextBetweenNames:startSubstring], ["&"]):
+            ''' Signalwörter, die das Vorliegen von Editoren markieren, werden durch die editorRegEx geprüft.
+            Es gilt folgende Heuristik: Ein Signalwort für Editoren, das vor oder hinter den Editorenamen steht, 
+            darf nur von bestimmten Satzzeichen/Punkuationen und nicht von Wörtern unterbrochen sein.
+            Es kann schließlich zufällig sein, dass ein RegEx ein Editor-Signalwort erkennt, 
+            das jedoch eigentlich keins ist, da sie die zuvor genannte Heuristik nicht erfüllen. 
+            
+            Beispiel: 
+            Gegeben sei folgender Ausschnitt eines Literaturstrings: "Bennett, C. H., DiVincenzo, D. P., Eds."
+            Das Signalwort "Eds." befindet sich direkt hinter den beiden Autorennamen, da es nur von einem Punkt, Komma und
+            einem Leerzeichen (also bestimmten Satzzeichen) unterbrochen ist. Also ist die Heuristik erfüllt.
+            
+            Dieses Vorgehen gilt für den elif-Teil analog.'''
             return True, startSubstring + startIndexTextBetweenNames, endSubstring + startIndexTextBetweenNames
     elif startIndexTextBetweenNames > -1:
         if isSpeceficPunctuation(textBetweenNames[endSubstring:startIndexTextBetweenNames], ["&"]):
@@ -257,9 +283,21 @@ def getAuthors(text):
     '''
     Schneidet die Autoren aus dem original Literaturstring aus. Es können mehrere Autoren vorliegen und diese
     können mit einem "and" oder "&" verknüpft sein. Die Funktion soll alle Autoren einschließlich dem "and" und "&"
-    in einem Block extrahieren. Dieser Block ist sinnbildlich eine Kette von Namen.
+    in einem Block extrahieren. Dieser Block ist sinnbildlich eine Kette von Namen. Die Variable textBetweenNames 
+    beinhaltet die Substrings, die zwischen solchen Namensketten stehen. 
     Wenn eine solche Kette von Namen gefunden wird, wird setChainStart = True gesetzt und geprüft, 
-    ob es sich auch um Autoren handelt.
+    ob es sich auch um Autorennamen handelt.
+    
+    Beispiel:
+    "Nielsen, M. A.; Chuang, I. L. Quantum Computation and Quantum Information. In Handbook of Quantum Information Science;
+    Bennett, C. H., DiVincenzo, D. P., Eds.; Quantum Science and Technology; Springer: Berlin, Germany, 2026; Vol. 4, 
+    pp 250–300. https://doi.org/10.1007/springerreference-303198."
+    
+    Da Autoren und Editoren vorliegen, liegen zwei Abschnitte vor, die textBetweenNames sind, nämlich zwischen Index
+    28 und 118 sowie zwischen 151 und dem Ende des Strings. Entsprechend liegen zwischen 0 und 27 und 119 bis 150 
+    Namensketten vor. Ob Sonderzeichen wie der Punkt zur Abkürzung von Nachnamen mit zum Namen gezählt werden, hängt
+    von der NER ab.
+
     
     Parameter:
     text: Literaturstring.
@@ -293,7 +331,19 @@ def getAuthors(text):
             if setChainStart: 
                 chainStartIndex = df_PER["start"].iloc[index]
                 setChainStart = False
-            if not onlyPunctuation and not onlyAnd:
+            if not onlyPunctuation and not onlyAnd:      
+                '''Wenn ein Substring, der in textBetweenNames gespeichert wird, nicht nur Satzzeichen oder ein "und" ist, 
+                dann ist es nicht Bestandteil einer Namenskette und somit ein echter Substring zwischen Autorenketten. 
+                Solch ein Substring heißt im Folgenden "echtes textBetweenNames".
+                
+                Beispiel: 
+                Der Stringteil "Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick Haffner" ist eine Autorenkette. Der Teil
+                ", and" gehört folglich mit zur Autorenkette und ist kein echtes textBetweenNames.
+                
+                Weil Autoren immer am Anfang des Literaturstrings stehen gilt: Ist ein echtes TextBetweenNames 
+                erkannt worden, das direkt hinter der Autorenkette mit Stardindex 0 folgt, so muss vor diesem TextBetweenNames
+                eine Namenskette stehen, die die Autoren enthält. Daher setChainStart = True.
+                '''    
                 setChainStart = True
                 startIndexAuthors = chainStartIndex
                 endIndexAuthors = df_PER["end"].iloc[index]
@@ -342,14 +392,14 @@ def getEditors(text):
             onlyPunctuation = isSpeceficPunctuation(textBetweenNames, ["&"])
             firstStartIndex, firstEndIndex, andTyp = getIndexOfSubstring(textBetweenNames, search_terms)
             onlyAnd = textBetweenNames == andTyp
-            #if true, that a new chain of Authors begins. An Author Chain is for example "Name1, Name2 and Name3"
             if setChainStart: 
                 chainStartIndex = df_PER["start"].iloc[index]
                 setChainStart = False
-            #If the following if-STatement is true, than the chain has reached an end
             if not onlyPunctuation and not onlyAnd:
+                '''
+                Zur Erklärung des Codes siehe analoge Implementierung in getAuthors
+                '''
                 setChainStart = True
-                #editors can be the first Part of an literature reference
                 textFromStartUntilFirstName = text[0:df_PER["start"].iloc[0]]
                 isEditor, startIndexEditorMarker, endIndexEditorMarker = is_Editor(editorRegEx, textFromStartUntilFirstName, 0, False)
                 if startIndexEditorMarker == -1:
@@ -510,24 +560,6 @@ def getPage(text):
     if pages != "":
         pages = re.search(r'\d+(-|--|–)\d+', pages).group()
     return changedText, custom_strip(pages)
-
-def getSubstringByRegEx(text, regex = []):
-    
-    '''
-    Prüft für eine Liste von RegEx, ob sie in text vorkommen. Der RegEx, der den Substring mit der grötßen
-    Länge ermittelt, kommt zum Zuge. Dieser Substring wird dann aus dem text ausgeschnitten. Ein RegEx wird
-    dabei von hinten beginnend in text geprüft und der erste Match zählt.
-    
-    Parameter:
-    text: Literaturstring.
-    regEx = []: Liste mit RegEx. 
-    
-    return: Literaturstring ohne Substring und ausgeschnittenen Substring
-    '''
-    
-    startIndex, endIndex, substring = getIndexOfSubstring(text, regex, True)
-    changedText, substring = replaceSubstring(startIndex, endIndex, text, "")
-    return changedText, custom_strip(substring)
 
 def getVolumeNumber(text):
                     
@@ -781,7 +813,7 @@ def create_bibtex(text):
     text, doi = getDoi(text)
     text, url = getURL(text)
     text, month, year = getDate(text)
-    text, page = getPage(text)
+    text, pages = getPage(text)
     text, volume, number = getVolumeNumber(text)
     text, edition = getEdition(text)
     text, address = getAddress(text)
