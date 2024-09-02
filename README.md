@@ -122,7 +122,7 @@ Der BibTex-Konverter kann mehrere Referenzen als Batch-Konvertierung durchführe
 
 ### 2. Konvertieren in BibTex
 Überprüfen Sie den Referenzstring auf offensichtliche Fehler (Sonderzeichen, fehlerhafte Namen etc.), die durch das Kopieren oder durch die OCR entstanden sind und klicken Sie auf den Button ```Convert```.
-Im unteren Textfeld wird der BibTex-Code erzeugt. Passen Sie den Code ggf. händisch an.
+Im unteren Textfeld wird der BibTex-Code erzeugt. Passen Sie den Code ggf. händisch an. **ACHTUNG: Bei der ersten Konvertierung werden noch einige Pakete geladen, was die Ausgabe ein wenig verzögert. Alle weiteren Konvertierungen sind dann wesentlich schneller.**
 
 ### 3. Speichern der konvertierten Referenzen
 Der Inhalt des unteren Textfeldes wird als txt-Datei im Standardordner des Browsers gespeichert, wenn Sie den Button ```Download txt-file``` klicken.
