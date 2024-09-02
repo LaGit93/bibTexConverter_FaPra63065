@@ -102,7 +102,12 @@ dieses Repositories.
 conda activate bibTexConverter
 ```
 
-Führen Sie anschließend das main.py Skript aus, um den Flask-Server zu starten. Öffnen Sie in einem Webbrowser ein neues Fenster und öffnen Sie die  http://127.0.0.1:5000 , in dem die Benutzeroberfläche erzeugt wird:
+Wechseln Sie in das Verzeichnis, in dem sich die Datei `main.py` befinden und führen Sie das Skript aus, um den Flask-Server zu starten.:
+```
+python main.py
+```
+
+Öffnen Sie in einem Webbrowser ein neues Fenster und öffnen Sie die  http://127.0.0.1:5000 , in dem die Benutzeroberfläche erzeugt wird:
 <p align="center">
 <img src="https://github.com/LaGit93/bibTexConverter_FaPra63065/blob/main/Dokumente/WebApp.jpeg" width="500"/>
 </p>
