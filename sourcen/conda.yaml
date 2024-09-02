@@ -15,5 +15,3 @@ dependencies:
   - transformers
   - pytesseract=0.3.10
   - pillow=10.4.0
-  - spacy=3.5.1
-  - spacy-model-en_core_web_sm=3.5.0
