@@ -102,7 +102,7 @@ dieses Repositories.
 conda activate bibTexConverter
 ```
 
-Wechseln Sie in das Verzeichnis, in dem sich die Datei `main.py` befindet (default ist 'sourcen') und führen Sie das Skript aus, um den Flask-Server zu starten:
+Wechseln Sie in das Verzeichnis, in dem sich die Datei `main.py` befindet (default ist `sourcen`) und führen Sie das Skript aus, um den Flask-Server zu starten:
 ```
 python main.py
 ```
